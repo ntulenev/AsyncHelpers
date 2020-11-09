@@ -20,7 +20,7 @@ namespace AsyncHelpers
 
         public void Dispose()
         {
-            if (_isDisposed)
+            if (!_isDisposed)
             {
                 _resetAction();
                 _isDisposed = true;
