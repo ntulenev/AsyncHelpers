@@ -42,11 +42,11 @@ namespace AsyncHelpers
         {
             lock (_getValueAsyncGuard)
             {
-                if (_isValueIsWork)
+                if (_isValueInWork)
                 {
                     throw new InvalidOperationException("ResultContainer was already got but not disposed yet.");
                 }
-                _isValueIsWork = true;
+                _isValueInWork = true;
             }
 
             var value = await _tcs.Task.ConfigureAwait(false);
@@ -54,7 +54,7 @@ namespace AsyncHelpers
             return new ResultContainer<T>(() =>
             {
                 CreateCompletionSource();
-                _isValueIsWork = false;
+                _isValueInWork = false;
                 _are.Set();
 
             }, value);
@@ -70,7 +70,7 @@ namespace AsyncHelpers
 
         private TaskCompletionSource<T> _tcs = default!;
 
-        private volatile bool _isValueIsWork = false;
+        private volatile bool _isValueInWork = false;
 
         private readonly bool _runContinuationsAsynchronously;
 
