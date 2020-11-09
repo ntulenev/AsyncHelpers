@@ -43,7 +43,11 @@ Get 2 on Thread 4
 Add 3 on Thread 4
 Get 3 on Thread 4
 ```
-for var runContinuationsAsynchronously = true; we will have Thread switching in Get part
+for 
+```C#
+var runContinuationsAsynchronously = true; 
+```
+we will have Thread switching in Get part
 
 ```
 Add 0 on Thread 4
