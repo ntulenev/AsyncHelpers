@@ -4,23 +4,27 @@ using System.Threading.Tasks;
 
 namespace AsyncHelpers
 {
-
+    /// <summary>
+    /// <see cref="TaskCompletionSource{TResult}"/> that could be recharge.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class RechargeableCompletionSource<T>
     {
+
+        /// <summary>
+        /// Creates instance of <see cref="RechargeableCompletionSource{T}"/>.
+        /// </summary>
+        /// <param name="runContinuationsAsynchronously">true is we need <see cref="TaskCompletionSource{TResult}"/> async continuation</param>
         public RechargeableCompletionSource(bool runContinuationsAsynchronously)
         {
             _runContinuationsAsynchronously = runContinuationsAsynchronously;
             CreateCompletionSource();
         }
 
-        private void CreateCompletionSource()
-        {
-            if (_runContinuationsAsynchronously)
-                _tcs = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
-            else
-                _tcs = new TaskCompletionSource<T>();
-        }
-
+        /// <summary>
+        /// Sets result and blocks until result is awaited and processed
+        /// </summary>
+        /// <param name="data">result</param>
         public void SetResultAndWait(T data)
         {
             lock (_setResultGuard)
@@ -30,6 +34,10 @@ namespace AsyncHelpers
             }
         }
 
+        /// <summary>
+        /// Gets value container <see cref="ResultContainer{T}"/>. Container should be disposed after result is processed.
+        /// </summary>
+        /// <returns></returns>
         public async Task<ResultContainer<T>> GetValueAsync()
         {
             lock (_getValueAsyncGuard)
@@ -50,6 +58,14 @@ namespace AsyncHelpers
                 _are.Set();
 
             }, value);
+        }
+
+        private void CreateCompletionSource()
+        {
+            if (_runContinuationsAsynchronously)
+                _tcs = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
+            else
+                _tcs = new TaskCompletionSource<T>();
         }
 
         private TaskCompletionSource<T> _tcs = default!;
