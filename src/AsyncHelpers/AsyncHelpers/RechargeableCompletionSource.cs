@@ -36,12 +36,12 @@ namespace AsyncHelpers
             {
                 if (_isValueIsWork)
                 {
-                    throw new InvalidOperationException("ResultContainer was already got but not disposed yet");
+                    throw new InvalidOperationException("ResultContainer was already got but not disposed yet.");
                 }
                 _isValueIsWork = true;
             }
 
-            await _tcs.Task.ConfigureAwait(false);
+            var value = await _tcs.Task.ConfigureAwait(false);
 
             return new ResultContainer<T>(() =>
             {
@@ -49,7 +49,7 @@ namespace AsyncHelpers
                 _isValueIsWork = false;
                 _are.Set();
 
-            }, _tcs.Task.Result);
+            }, value);
         }
 
         private TaskCompletionSource<T> _tcs = default!;
