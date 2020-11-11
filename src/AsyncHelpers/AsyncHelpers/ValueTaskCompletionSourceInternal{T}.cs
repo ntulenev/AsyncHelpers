@@ -4,6 +4,8 @@ using System.Threading.Tasks.Sources;
 
 namespace AsyncHelpers
 {
+    // Early version need to fix
+
     internal class ValueTaskCompletionSourceInternal<T> : IValueTaskSource<T>, IValueTaskSource
     {
         public T GetResult(short token)
@@ -18,7 +20,6 @@ namespace AsyncHelpers
             finally
             {
                 _mre.Reset();
-                Version++;
             }
 
         }
@@ -61,13 +62,12 @@ namespace AsyncHelpers
 
         public ValueTaskCompletionSourceInternal(bool runContinuationsAsynchronously)
         {
-            Version = _mre.Version;
             _mre.RunContinuationsAsynchronously = runContinuationsAsynchronously;
         }
 
         public ValueTask<T> Task => new ValueTask<T>(this, Version);
 
-        public short Version { get; private set; }
+        public short Version => _mre.Version;
 
         private ManualResetValueTaskSourceCore<T> _mre = new ManualResetValueTaskSourceCore<T>();
 
