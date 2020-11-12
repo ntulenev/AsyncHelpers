@@ -91,7 +91,7 @@ var t2 = Task.Run(async () =>
 await Task.WhenAll(t1, t2);
 ```
 
-### Benchmark
+#### ValueTaskCompletionSource Benchmark
 
 ```C#
 [MemoryDiagnoser]
