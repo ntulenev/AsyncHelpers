@@ -91,4 +91,81 @@ var t2 = Task.Run(async () =>
 await Task.WhenAll(t1, t2);
 ```
 
+###Benchmark
 
+```C#
+[MemoryDiagnoser]
+public class Test
+{
+
+    public const int ITERATIONS = 1_000_000;
+
+    [Benchmark]
+    public async Task ValueTaskTest()
+    {
+        int indexSet = ITERATIONS;
+        int indexRead = ITERATIONS;
+        var i = new ValueTaskCompletionSource<int>(false);
+        AutoResetEvent are = new AutoResetEvent(false);
+
+        var t1 = Task.Run(() =>
+        {
+            int v = 0;
+            while (indexSet-- >= 0)
+            {
+                i.SetResult(v++);
+                are.WaitOne();
+            }
+        });
+
+        var t2 = Task.Run(async () =>
+        {
+            while (indexRead-- >= 0)
+            {
+                ValueTask<int> t = i.Task;
+                var result = await t;
+                are.Set();
+            }
+        });
+        await Task.WhenAll(t1, t2);
+    }
+
+    [Benchmark]
+    public  async Task TaskTest()
+    {
+        int indexSet = ITERATIONS;
+        int indexRead = ITERATIONS;
+        var i = new TaskCompletionSource<int>();
+        AutoResetEvent are = new AutoResetEvent(false);
+
+        var t1 = Task.Run(() =>
+        {
+            int v = 0;
+            while (indexSet-- >= 0)
+            {
+                i.SetResult(v++);
+                are.WaitOne();
+            }
+        });
+
+        var t2 = Task.Run(async () =>
+        {
+            while (indexRead-- >= 0)
+            {
+                Task<int> t = i.Task;
+                var result = await t;
+                i = new TaskCompletionSource<int>(); //reset TCS
+                are.Set();
+            }
+        });
+        await Task.WhenAll(t1, t2);
+    }
+
+}
+
+```
+
+|        Method |     Mean |    Error |   StdDev |      Gen 0 | Gen 1 | Gen 2 |  Allocated |
+|-------------- |---------:|---------:|---------:|-----------:|------:|------:|-----------:|
+| ValueTaskTest | 588.5 ms | 11.59 ms | 25.93 ms |          - |     - |     - |     1016 B |
+|      TaskTest | 606.3 ms | 11.76 ms | 25.06 ms | 22000.0000 |     - |     - | 96001080 B |
