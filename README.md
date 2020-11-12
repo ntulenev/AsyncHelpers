@@ -110,7 +110,7 @@ public class Test
 
         var t1 = Task.Run(() =>
         {
-            Thread.Sleep(100); //To have await first
+            Thread.Sleep(100); // attempt to have await t first
             int v = 0;
             while (indexSet-- >= 0)
             {
@@ -141,7 +141,7 @@ public class Test
 
         var t1 = Task.Run(() =>
         {
-            Thread.Sleep(100); //To have await first
+            Thread.Sleep(100); // attempt to have await t first
             int v = 0;
             while (indexSet-- >= 0)
             {
@@ -156,7 +156,7 @@ public class Test
             {
                 Task<int> t = i.Task;
                 var result = await t;
-                i = new TaskCompletionSource<int>(); //reset TCS
+                i = new TaskCompletionSource<int>(); // reset TCS
                 are.Set();
             }
         });
