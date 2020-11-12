@@ -60,3 +60,35 @@ Add 3 on Thread 4
 Get 3 on Thread 6
 ```
 
+### ValueTaskCompletionSource
+
+IValueTaskSource based analogue of TaskCompletionSource without allocation on async way.
+
+```C#
+ValueTaskCompletionSource<int> i = new ValueTaskCompletionSource<int>(false);
+AutoResetEvent are = new AutoResetEvent(false);
+
+var t1 = Task.Run(() =>
+{
+    int v = 0;
+    while (true)
+    {
+        i.SetResult(v++);
+        are.WaitOne();
+    }
+});
+
+var t2 = Task.Run(async () =>
+{
+    while (true)
+    {
+        ValueTask<int> t = i.Task;
+        var result = await t;
+        Console.WriteLine($"{result}");
+        are.Set();
+    }
+});
+await Task.WhenAll(t1, t2);
+```
+
+
