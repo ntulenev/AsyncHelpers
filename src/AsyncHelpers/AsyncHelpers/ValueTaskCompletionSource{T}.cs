@@ -3,26 +3,53 @@ using System.Threading.Tasks;
 
 namespace AsyncHelpers
 {
-    // Early version need to fix
 
-    public class ValueTaskCompletionSource<T>
+    /// <summary>
+    /// <see cref="ValueTask{TResult}"/> implemetation of <see cref="TaskCompletionSource{TResult}"/>.
+    /// </summary>
+    /// <typeparam name="TResult">Type of Task result.</typeparam>
+    public class ValueTaskCompletionSource<TResult>
     {
-        public bool TrySetResult(T result) => _vts.TrySetResult(result, _vts.Version);
+        /// <summary>
+        /// Creates <see cref="ValueTaskCompletionSource{TResult}"/>.
+        /// </summary>
+        /// <param name="runContinuationsAsynchronously">true is we need async continuation.</param>
+        public ValueTaskCompletionSource(bool runContinuationsAsynchronously)
+        {
+            _vts = new ReusableValueTask<TResult>(runContinuationsAsynchronously);
+        }
 
-        public void SetResult(T result)
+        /// <summary>
+        /// Attempt to completes with a successful result.
+        /// </summary>
+        public bool TrySetResult(TResult result) => _vts.TrySetResult(result, _vts.Version);
+
+        /// <summary>
+        /// Completes with a successful result.
+        /// </summary>
+        public void SetResult(TResult result)
         {
             if (!TrySetResult(result))
                 throw new InvalidOperationException();
         }
 
+        /// <summary>
+        /// Attempt to completes with a cancellation.
+        /// </summary>
         public bool TrySetCanceled() => _vts.TrySetCanceled(_vts.Version);
 
+        /// <summary>
+        /// Completes with a cancellation.
+        /// </summary>
         public void SetCanceled()
         {
             if (!TrySetCanceled())
                 throw new InvalidOperationException();
         }
 
+        /// <summary>
+        /// Attempt to completes with a error.
+        /// </summary>
         public bool TrySetException(Exception ex)
         {
             if (ex == null)
@@ -30,6 +57,9 @@ namespace AsyncHelpers
             return _vts.TrySetException(ex, _vts.Version);
         }
 
+        /// <summary>
+        /// Completes with a error.
+        /// </summary>
         public void SetException(Exception ex)
         {
             if (ex == null)
@@ -38,13 +68,8 @@ namespace AsyncHelpers
                 throw new InvalidOperationException();
         }
 
-        public ValueTaskCompletionSource(bool runContinuationsAsynchronously)
-        {
-            _vts = new ValueTaskCompletionSourceInternal<T>(runContinuationsAsynchronously);
-        }
+        public ValueTask<TResult> Task => _vts.Task;
 
-        public ValueTask<T> Task => _vts.Task;
-
-        private ValueTaskCompletionSourceInternal<T> _vts;
+        private readonly ReusableValueTask<TResult> _vts;
     }
 }
