@@ -110,6 +110,7 @@ public class Test
 
         var t1 = Task.Run(() =>
         {
+            Thread.Sleep(100); //To have await first
             int v = 0;
             while (indexSet-- >= 0)
             {
@@ -131,7 +132,7 @@ public class Test
     }
 
     [Benchmark]
-    public  async Task TaskTest()
+    public async Task TaskTest()
     {
         int indexSet = ITERATIONS;
         int indexRead = ITERATIONS;
@@ -140,6 +141,7 @@ public class Test
 
         var t1 = Task.Run(() =>
         {
+            Thread.Sleep(100); //To have await first
             int v = 0;
             while (indexSet-- >= 0)
             {
@@ -162,10 +164,9 @@ public class Test
     }
 
 }
-
 ```
 
-|        Method |     Mean |    Error |   StdDev |      Gen 0 | Gen 1 | Gen 2 |  Allocated |
-|-------------- |---------:|---------:|---------:|-----------:|------:|------:|-----------:|
-| ValueTaskTest | 588.5 ms | 11.59 ms | 25.93 ms |          - |     - |     - |     1016 B |
-|      TaskTest | 606.3 ms | 11.76 ms | 25.06 ms | 22000.0000 |     - |     - | 96001080 B |
+|        Method |     Mean |    Error |  StdDev |      Gen 0 | Gen 1 | Gen 2 |   Allocated |
+|-------------- |---------:|---------:|--------:|-----------:|------:|------:|------------:|
+| ValueTaskTest | 647.8 ms | 11.59 ms | 9.68 ms |          - |     - |     - |     1.09 KB |
+|      TaskTest | 652.6 ms |  9.99 ms | 8.86 ms | 22000.0000 |     - |     - | 93751.19 KB |
