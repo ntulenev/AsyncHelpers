@@ -73,6 +73,7 @@ var t1 = Task.Run(() =>
     int v = 0;
     while (true)
     {
+        Thread.Sleep(1_000); // attempts to execute await t before set result
         i.SetResult(v++);
         are.WaitOne();
     }
@@ -88,5 +89,6 @@ var t2 = Task.Run(async () =>
         are.Set();
     }
 });
+
 await Task.WhenAll(t1, t2);
 ```
