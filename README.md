@@ -7,7 +7,7 @@ Contains:
 * SinglePhaseAsyncBarrier
 
 ### RechargeableCompletionSource
-
+TaskCompletionSource analogue with some kind of reset operation that could be used multiple times in producer–consumer scenario.
 ```C#
 var runContinuationsAsynchronously = false;
 var rtcs = new RechargeableCompletionSource<int>(runContinuationsAsynchronously);
@@ -100,7 +100,7 @@ await Task.WhenAll(t1, t2);
 
 ### SinglePhaseAsyncBarrier
 
-Async version of Barrier with single phase of work
+Async version of Barrier with single phase of work.
 
 ```C#
 SinglePhaseAsyncBarrier spb = new SinglePhaseAsyncBarrier(3);
