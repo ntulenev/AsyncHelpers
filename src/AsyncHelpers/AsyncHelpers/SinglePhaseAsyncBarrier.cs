@@ -1,13 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AsyncHelpers
 {
-
-    //TODO Add Comments
+    /// <summary>
+    /// Single phases async analogue of <see cref="System.Threading.Barrier"/>
+    /// </summary>
     public class SinglePhaseAsyncBarrier
     {
+        /// <summary>
+        /// Creates barrier for <paramref name="participantCount"/> participants.
+        /// </summary>
+        /// <param name="participantCount">Count of the participants.</param>
+        /// <exception cref="ArgumentException">Throws exception if participantCount is incorrest</exception>
         public SinglePhaseAsyncBarrier(int participantCount)
         {
             if (participantCount < 0)
@@ -16,6 +21,9 @@ namespace AsyncHelpers
             _participantCount = participantCount;
         }
 
+        /// <summary>
+        /// Signals about new participant and reutrns the task that will be finished when all participants will be added.
+        /// </summary>
         public Task SignalAndWaitAsync()
         {
             lock (_barrierCheckGuard)
