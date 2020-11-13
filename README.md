@@ -207,7 +207,7 @@ var t2 = Task.Run(() =>
     Console.WriteLine("T2 Done");
 });
 
-await new[] { t1, t2 }.WaitAllTaskButCheck(() =>
+await new[] { t1, t2 }.WaitAllTasksButCheck(() =>
 {
     Console.WriteLine("Rise error without waiting 10 seconds for second task.");
 });
