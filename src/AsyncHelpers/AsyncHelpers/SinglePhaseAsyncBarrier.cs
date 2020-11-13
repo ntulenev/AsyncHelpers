@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace AsyncHelpers
 {
     /// <summary>
-    /// Single phases async analogue of <see cref="System.Threading.Barrier"/>
+    /// Single phase async analogue of <see cref="System.Threading.Barrier"/>
     /// </summary>
     public class SinglePhaseAsyncBarrier
     {
