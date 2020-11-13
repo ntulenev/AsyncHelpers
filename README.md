@@ -5,6 +5,7 @@ Contains:
 * RechargeableCompletionSource
 * ValueTaskCompletionSource
 * SinglePhaseAsyncBarrier
+* ContinuationQueue
 
 ### RechargeableCompletionSource
 TaskCompletionSource analogue with some kind of reset operation that could be used multiple times in producer–consumer scenario.
@@ -143,3 +144,45 @@ A Done
 B Done
 ```
 
+### ContinuationQueue
+Queue that registers continuations and runs them one be one.
+
+```C#
+ContinuationQueue cq = new ContinuationQueue();
+
+var t1 = Task.Run(async () =>
+{
+   Thread.Sleep(100);
+   Console.WriteLine("Task A Added");
+   await cq.RegisterTask();
+   Console.WriteLine("A Done");
+});
+
+var t2 = Task.Run(async () =>
+{
+    Thread.Sleep(200);
+    Console.WriteLine("Task B Added");
+    await cq.RegisterTask();
+    Console.WriteLine("B Done");
+});
+
+Thread.Sleep(1_000);
+Console.WriteLine("FinishTask");
+cq.FinishTask();
+Thread.Sleep(1_000);
+Console.WriteLine("FinishTask");
+cq.FinishTask();
+
+await Task.WhenAll(t1, t2);
+```
+
+Output
+
+```
+Task A Added
+Task B Added
+FinishTask
+A Done
+FinishTask
+B Done
+```
