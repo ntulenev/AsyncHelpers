@@ -191,7 +191,7 @@ B Done
 
 ### TaskExtensions
 
-#### WaitAllTaskButCheck
+#### WaitAllTasksButCheck
 Waits all tasks but invoke OnFaulted if any task is failed.
 
 ```C#
