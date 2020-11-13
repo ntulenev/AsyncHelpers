@@ -154,7 +154,7 @@ var t1 = Task.Run(async () =>
 {
    Thread.Sleep(100);
    Console.WriteLine("Task A Added");
-   await cq.RegisterTask();
+   await cq.WaitAsync();
    Console.WriteLine("A Done");
 });
 
@@ -162,7 +162,7 @@ var t2 = Task.Run(async () =>
 {
     Thread.Sleep(200);
     Console.WriteLine("Task B Added");
-    await cq.RegisterTask();
+    await cq.WaitAsync();
     Console.WriteLine("B Done");
 });
 
@@ -174,6 +174,7 @@ Console.WriteLine("FinishTask");
 cq.FinishTask();
 
 await Task.WhenAll(t1, t2);
+
 ```
 
 Output
