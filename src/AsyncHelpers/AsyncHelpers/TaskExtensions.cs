@@ -12,19 +12,29 @@ namespace AsyncHelpers
         /// <summary>
         /// Waits all tasks but invoke <paramref name="OnFaulted"/> if any task is failed
         /// </summary>
-        public static async Task WaitAllTaskButCheck(this IEnumerable<Task> tasks, Action OnFaulted)
+        /// <exception cref="ArgumentNullException">Throws if any arg is null</exception>
+        public static async Task WaitAllTaskButCheck(this IEnumerable<Task> tasks, Action onFaulted)
         {
-            if (OnFaulted == null)
-                throw new ArgumentNullException(nameof(OnFaulted));
+            if (tasks == null)
+            {
+                throw new ArgumentNullException(nameof(tasks));
+            }
+
+            if (onFaulted == null)
+            {
+                throw new ArgumentNullException(nameof(onFaulted));
+            }
 
             var any = Task.WhenAny(tasks).Unwrap();
+
             _ = any.ContinueWith(t =>
             {
                 if (t.IsFaulted)
                 {
-                    OnFaulted();
+                    onFaulted();
                 }
             });
+
             await Task.WhenAll(tasks);
         }
     }
