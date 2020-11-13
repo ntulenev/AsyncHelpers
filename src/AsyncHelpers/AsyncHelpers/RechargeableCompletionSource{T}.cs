@@ -77,6 +77,7 @@ namespace AsyncHelpers
         private readonly AutoResetEvent _are = new AutoResetEvent(false);
 
         private readonly object _setResultGuard = new object();
+
         private readonly object _getValueAsyncGuard = new object();
 
 
