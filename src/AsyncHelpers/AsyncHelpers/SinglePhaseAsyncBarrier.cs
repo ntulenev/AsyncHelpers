@@ -6,51 +6,40 @@ namespace AsyncHelpers
 {
 
     //TODO Add Comments
-
     public class SinglePhaseAsyncBarrier
     {
         public SinglePhaseAsyncBarrier(int participantCount)
         {
             if (participantCount < 0)
-            {
                 throw new ArgumentException("Value should be positive.", nameof(participantCount));
-            }
 
             _participantCount = participantCount;
-            _tcsItems = new List<TaskCompletionSource<object>>(participantCount);
         }
 
         public Task SignalAndWaitAsync()
         {
-            var tcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-            AddToBarrierAndCheck(tcs);
-
-            return tcs.Task;
-        }
-
-        private void AddToBarrierAndCheck(TaskCompletionSource<object> tcs)
-        {
             lock (_barrierCheckGuard)
             {
-                _tcsItems.Add(tcs);
-
-                if (_tcsItems.Count == _participantCount)
+                if (++_currentCount == _participantCount)
                 {
-                    foreach (var item in _tcsItems)
+                    if (_participantCount > 1)
                     {
-                        item.SetResult(null!);
+                        _tcs.SetResult(null!);
+                        _tcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
                     }
-
-                    _tcsItems.Clear();
+                    _currentCount = 0;
+                    return Task.CompletedTask;
                 }
+                return _tcs.Task;
             }
         }
 
-        private readonly object _barrierCheckGuard = new object();
-
-        private readonly List<TaskCompletionSource<object>> _tcsItems;
-
         private readonly int _participantCount;
+
+        private int _currentCount;
+
+        private TaskCompletionSource<object> _tcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        private readonly object _barrierCheckGuard = new object();
     }
 }
