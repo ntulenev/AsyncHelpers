@@ -192,7 +192,7 @@ B Done
 ### TaskExtensions
 
 #### WaitAllTaskButCheck
-Waits all tasks but invoke OnFaulted if any task is failed
+Waits all tasks but invoke OnFaulted if any task is failed.
 
 ```C#
 var t1 = Task.Run(() =>
