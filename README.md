@@ -6,6 +6,7 @@ Contains:
 * ValueTaskCompletionSource
 * SinglePhaseAsyncBarrier
 * ContinuationQueue
+* TaskExtensions
 
 ### RechargeableCompletionSource
 TaskCompletionSource analogue with some kind of reset operation that could be used multiple times in producer–consumer scenario.
@@ -186,4 +187,28 @@ FinishTask
 A Done
 FinishTask
 B Done
+```
+
+### TaskExtensions
+
+#### WaitAllTaskButCheck
+Waits all tasks but invoke OnFaulted if any task is failed.
+
+```C#
+var t1 = Task.Run(() =>
+{
+    Thread.Sleep(1_000);
+    throw new InvalidOperationException();
+});
+
+var t2 = Task.Run(() =>
+{
+    Thread.Sleep(10_000);
+    Console.WriteLine("T2 Done");
+});
+
+await new[] { t1, t2 }.WaitAllTaskButCheck(() =>
+{
+    Console.WriteLine("Rise error without waiting 10 seconds for second task.");
+});
 ```
