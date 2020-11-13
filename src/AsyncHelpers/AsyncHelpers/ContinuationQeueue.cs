@@ -12,7 +12,7 @@ namespace AsyncHelpers
         /// <summary>
         /// Register task for continuation.
         /// </summary>
-        public Task RegisterTask()
+        public Task WaitAsync()
         {
             lock (_queueGuard)
             {
