@@ -15,7 +15,7 @@ namespace AsyncHelpers
         /// <exception cref="ArgumentException">Throws exception if participantCount is incorrest</exception>
         public SinglePhaseAsyncBarrier(int participantCount)
         {
-            if (participantCount < 0)
+            if (participantCount <= 0)
                 throw new ArgumentException("Value should be positive.", nameof(participantCount));
 
             _participantCount = participantCount;

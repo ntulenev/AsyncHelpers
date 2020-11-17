@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 using FluentAssertions;
@@ -47,21 +46,20 @@ namespace AsyncHelpers.Tests
         public async Task WaitAllWithCorrectTasks()
         {
             //Arrange
-            var t1 = Task.Run(() =>
-            {
-                Thread.Sleep(100);
-            });
+            var tcs1 = new TaskCompletionSource<object>();
+            var t1 = tcs1.Task;
 
-            var t2 = Task.Run(() =>
-            {
-                Thread.Sleep(200);
-            });
+            var tcs2 = new TaskCompletionSource<object>();
+            var t2 = tcs2.Task;
 
             bool isFailed = false;
 
             // Act
             var task = TaskExtensions.WaitAllTasksButCheck(new[] { t1, t2 }, () => isFailed = true);
-            var timeoutTask = Task.Delay(500);
+            var timeoutTask = Task.Delay(500); // Attempts to ensure that task will finish.
+
+            tcs1.SetResult(null!);
+            tcs2.SetResult(null!);
 
             var result = await Task.WhenAny(task, timeoutTask);
 
@@ -72,25 +70,26 @@ namespace AsyncHelpers.Tests
 
         [Fact(DisplayName = "WaitAllTasksButCheck shoud run action of any task failed.")]
         [Trait("Category", "Unit")]
-        public void WaitAllWithFailedTasks()
+        public async Task WaitAllWithFailedTasks()
         {
             //Arrange
-            var t1 = Task.Run(() =>
-            {
-                throw new InvalidOperationException();
-            });
+            var tcs1 = new TaskCompletionSource<object>();
+            var t1 = tcs1.Task;
 
-            var t2 = Task.Run(() =>
-            {
-                Thread.Sleep(500);
-            });
+            var tcs2 = new TaskCompletionSource<object>();
+            var t2 = tcs2.Task;
 
             bool isFailed = false;
 
             // Act
-            var task = TaskExtensions.WaitAllTasksButCheck(new[] { t1, t2 }, () => isFailed = true);
+            var task = TaskExtensions.WaitAllTasksButCheck(new[] { t1, t2 }, () =>
+            {
+                isFailed = true;
+            });
 
-            Thread.Sleep(100);
+            tcs1.SetException(new InvalidOperationException());
+
+            await Task.Delay(100); // Attempts to ensure that continuation action runs.
 
             // Assert
             isFailed.Should().BeTrue();
