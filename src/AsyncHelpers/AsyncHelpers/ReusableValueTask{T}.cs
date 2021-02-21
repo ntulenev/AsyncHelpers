@@ -59,8 +59,11 @@ namespace AsyncHelpers
         /// <summary>
         /// Schedules the continuation action for this operation.
         /// </summary>
-        public void OnCompleted(Action<object> continuation, object state, short token, ValueTaskSourceOnCompletedFlags flags)
+        public void OnCompleted(Action<object?> continuation, object? state, short token, ValueTaskSourceOnCompletedFlags flags)
         {
+            if (continuation == null)
+                throw new ArgumentNullException(nameof(continuation));
+
             _mre.OnCompleted(continuation, state, token, flags);
         }
 
@@ -96,6 +99,7 @@ namespace AsyncHelpers
                 if (token == _mre.Version && _mre.GetStatus(token) == ValueTaskSourceStatus.Pending)
                 {
                     _mre.SetException(error);
+
                     return true;
                 }
                 return false;
@@ -112,7 +116,7 @@ namespace AsyncHelpers
         /// </summary>
         public short Version => _mre.Version;
 
-        private ManualResetValueTaskSourceCore<TResult> _mre = new ManualResetValueTaskSourceCore<TResult>();
+        private ManualResetValueTaskSourceCore<TResult> _mre;
 
         private readonly object _tokenGuard = new object();
 

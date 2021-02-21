@@ -16,7 +16,7 @@ namespace AsyncHelpers
         {
             lock (_queueGuard)
             {
-                var tcs = new TaskCompletionSource<object>(TaskContinuationOptions.RunContinuationsAsynchronously);
+                var tcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
                 _queue.Enqueue(tcs);
                 return tcs.Task;
             }
