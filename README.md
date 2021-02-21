@@ -108,12 +108,12 @@ Async version of Barrier with single phase of work.
 SinglePhaseAsyncBarrier spb = new SinglePhaseAsyncBarrier(3);
 
 var t1 = Task.Run(async () =>
-
+{
    Thread.Sleep(1_000);
    Console.WriteLine("Task A Added");
    await spb.SignalAndWaitAsync();
    Console.WriteLine("A Done");
-);
+});
 
 var t2 = Task.Run(async () =>
 {
