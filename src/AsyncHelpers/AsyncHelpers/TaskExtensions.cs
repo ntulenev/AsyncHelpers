@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AsyncHelpers
@@ -37,6 +38,30 @@ namespace AsyncHelpers
             });
 
             await Task.WhenAll(tasks);
+        }
+
+        /// <summary>
+        /// Attempt to execute async operation within the expected time.
+        /// </summary>
+        /// <param name="task">Task to execute.</param>
+        /// <param name="timeout">timeout in ms.</param>
+        /// <param name="ct">Token for cancel.</param>
+        /// <returns>True if task was finished before timout.</returns>
+        public static async Task<bool> TryExecuteWithTimeoutAsync(this Task task, int timeout, CancellationToken ct = default)
+        {
+            if (task == null)
+            {
+                throw new ArgumentNullException(nameof(task));
+            }
+
+            if (timeout <= 0)
+            {
+                throw new ArgumentException("Timeout should be positive.", nameof(timeout));
+            }
+
+            var resultTask = await Task.WhenAny(task, Task.Delay(timeout, ct)).ConfigureAwait(false);
+
+            return resultTask == task;
         }
     }
 }
