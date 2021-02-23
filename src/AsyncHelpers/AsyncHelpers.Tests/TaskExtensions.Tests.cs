@@ -10,7 +10,7 @@ namespace AsyncHelpers.Tests
 {
     public class TaskExtensionsTests
     {
-        [Fact(DisplayName = "WaitAllTasksButCheck shoud thow exception on tasks are null.")]
+        [Fact(DisplayName = "WaitAllTasksButCheck shoud thow exception when tasks are null.")]
         [Trait("Category", "Unit")]
         public async Task WaitAllTasksButCheckExceptionOnNullTasks()
         {
@@ -25,7 +25,7 @@ namespace AsyncHelpers.Tests
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
         }
 
-        [Fact(DisplayName = "WaitAllTasksButCheck shoud thow exception on action is null.")]
+        [Fact(DisplayName = "WaitAllTasksButCheck shoud thow exception when action is null.")]
         [Trait("Category", "Unit")]
         public async Task WaitAllTasksButCheckExceptionOnNullAction()
         {
@@ -94,6 +94,22 @@ namespace AsyncHelpers.Tests
             // Assert
             isFailed.Should().BeTrue();
             task.IsCompleted.Should().BeFalse();
+        }
+
+        [Fact(DisplayName = "TryExecuteWithTimeoutAsync shoud thow exception when task is null.")]
+        [Trait("Category", "Unit")]
+        public async Task TryExecuteWithTimeoutAsyncExceptionOnNullTasks()
+        {
+            //Arrange
+            Task task = null!;
+            var timeout = 1000;
+
+            // Act
+            var exception = await Record.ExceptionAsync(
+                () => TaskExtensions.TryExecuteWithTimeoutAsync(task,timeout));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
         }
     }
 }
