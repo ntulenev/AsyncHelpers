@@ -128,5 +128,23 @@ namespace AsyncHelpers.Tests
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
         }
+
+        [Fact(DisplayName = "TryExecuteWithTimeoutAsync works properly with completed task.")]
+        [Trait("Category", "Unit")]
+        public async Task TryExecuteWithTimeoutWorksOnCompletedTask()
+        {
+            //Arrange
+            Task task = Task.CompletedTask!;
+            var timeout = 1000;
+            bool result = false;
+
+            // Act
+            var exception = await Record.ExceptionAsync(
+                async () => result = await TaskExtensions.TryExecuteWithTimeoutAsync(task, timeout));
+
+            // Assert
+            exception.Should().BeNull();
+            result.Should().BeTrue();
+        }
     }
 }
