@@ -11,9 +11,9 @@ namespace AsyncHelpers
         /// <summary>
         /// Creates container for <see cref="RechargeableCompletionSource{T}"/> result.
         /// </summary>
-        /// <param name="resetAction">logic that should be run on dispose stage</param>
-        /// <param name="value">result</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="resetAction"/> is null</exception>
+        /// <param name="resetAction">logic that should be run on dispose stage.</param>
+        /// <param name="value">result.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="resetAction"/> is null.</exception>
         public ResultContainer(Action resetAction, T value)
         {
             if (resetAction is null)
@@ -24,14 +24,14 @@ namespace AsyncHelpers
         }
 
         /// <summary>
-        /// Result value
+        /// Result value.
         /// </summary>
         public T Value { get; }
 
         private readonly Action _resetAction;
 
         /// <summary>
-        /// Dispose container and reset <see cref="RechargeableCompletionSource{T}"/>
+        /// Dispose container and reset <see cref="RechargeableCompletionSource{T}"/>.
         /// </summary>
         public void Dispose()
         {

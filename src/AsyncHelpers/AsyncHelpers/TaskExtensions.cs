@@ -11,11 +11,11 @@ namespace AsyncHelpers
     public static class TaskExtensions
     {
         /// <summary>
-        /// Waits all tasks but invoke <paramref name="OnFaulted"/> if any task is failed
+        /// Waits all tasks but invoke <paramref name="OnFaulted"/> if any task is failed.
         /// </summary>
-        /// <exception cref="ArgumentNullException">Throws if any arg is null</exception>
-        /// <exception cref="ArgumentNullException">Throws if any arg is null</exception>
-        public static async Task WaitAllTasksButCheck(this IEnumerable<Task> tasks, Action onFaulted)
+        /// <exception cref="ArgumentNullException">Throws if any arg is null.</exception>
+        /// <exception cref="ArgumentNullException">Throws if any arg is null.</exception>
+        public static async Task WaitAllTasksButCheckAsync(this IEnumerable<Task> tasks, Action onFaulted)
         {
             if (tasks == null)
             {
@@ -47,6 +47,8 @@ namespace AsyncHelpers
         /// <param name="timeout">timeout in ms.</param>
         /// <param name="ct">Token for cancel.</param>
         /// <returns>True if task was finished before timout.</returns>
+        /// <exception cref="ArgumentNullException">Throws if task is null.</exception>
+        /// <exception cref="ArgumentException">Throws if timeout is not positive.</exception>
         public static async Task<bool> TryExecuteWithTimeoutAsync(this Task task, int timeout, CancellationToken ct = default)
         {
             if (task == null)

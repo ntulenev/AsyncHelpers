@@ -19,7 +19,7 @@ namespace AsyncHelpers.Tests
 
             // Act
             var exception = await Record.ExceptionAsync(
-                () => TaskExtensions.WaitAllTasksButCheck(tasks, () => { }));
+                () => TaskExtensions.WaitAllTasksButCheckAsync(tasks, () => { }));
 
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -35,7 +35,7 @@ namespace AsyncHelpers.Tests
 
             // Act
             var exception = await Record.ExceptionAsync(
-                () => TaskExtensions.WaitAllTasksButCheck(tasks, a));
+                () => TaskExtensions.WaitAllTasksButCheckAsync(tasks, a));
 
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -55,7 +55,7 @@ namespace AsyncHelpers.Tests
             bool isFailed = false;
 
             // Act
-            var task = TaskExtensions.WaitAllTasksButCheck(new[] { t1, t2 }, () => isFailed = true);
+            var task = TaskExtensions.WaitAllTasksButCheckAsync(new[] { t1, t2 }, () => isFailed = true);
             var timeoutTask = Task.Delay(500); // Attempts to ensure that task will finish.
 
             tcs1.SetResult(null!);
@@ -82,7 +82,7 @@ namespace AsyncHelpers.Tests
             bool isFailed = false;
 
             // Act
-            var task = TaskExtensions.WaitAllTasksButCheck(new[] { t1, t2 }, () =>
+            var task = TaskExtensions.WaitAllTasksButCheckAsync(new[] { t1, t2 }, () =>
             {
                 isFailed = true;
             });

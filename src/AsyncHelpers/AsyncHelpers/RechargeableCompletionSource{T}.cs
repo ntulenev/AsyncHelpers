@@ -14,7 +14,7 @@ namespace AsyncHelpers
         /// <summary>
         /// Creates instance of <see cref="RechargeableCompletionSource{T}"/>.
         /// </summary>
-        /// <param name="runContinuationsAsynchronously">true is we need <see cref="TaskCompletionSource{TResult}"/> async continuation</param>
+        /// <param name="runContinuationsAsynchronously">true is we need <see cref="TaskCompletionSource{TResult}"/> async continuation.</param>
         public RechargeableCompletionSource(bool runContinuationsAsynchronously)
         {
             _runContinuationsAsynchronously = runContinuationsAsynchronously;
@@ -22,7 +22,7 @@ namespace AsyncHelpers
         }
 
         /// <summary>
-        /// Sets result and blocks until result is awaited and processed
+        /// Sets result and blocks until result is awaited and processed.
         /// </summary>
         /// <param name="data">result</param>
         public void SetResultAndWait(T data)
@@ -70,7 +70,7 @@ namespace AsyncHelpers
 
         private TaskCompletionSource<T> _tcs = default!;
 
-        private volatile bool _isValueInWork = false;
+        private volatile bool _isValueInWork;
 
         private readonly bool _runContinuationsAsynchronously;
 

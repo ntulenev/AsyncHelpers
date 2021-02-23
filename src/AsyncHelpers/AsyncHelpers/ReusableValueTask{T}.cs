@@ -22,7 +22,7 @@ namespace AsyncHelpers
         /// <summary>
         /// Gets the result fo <see cref="ReusableValueTask{TResult}"/>.
         /// </summary>
-        /// <param name="token">The result of the <see cref="ReusableValueTask{TResult}"/></param>
+        /// <param name="token">The result of the <see cref="ReusableValueTask{TResult}"/>.</param>
         public TResult GetResult(short token)
         {
             lock (_tokenGuard)
@@ -44,7 +44,7 @@ namespace AsyncHelpers
         /// <summary>
         /// Gets the result fo <see cref="ReusableValueTask{TResult}"/>.
         /// </summary>
-        /// <param name="token">The result of the <see cref="ReusableValueTask{TResult}"/></param>
+        /// <param name="token">The result of the <see cref="ReusableValueTask{TResult}"/>.</param>
         void IValueTaskSource.GetResult(short token) => GetResult(token);
 
 

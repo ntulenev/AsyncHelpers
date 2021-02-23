@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace AsyncHelpers
 {
     /// <summary>
-    /// Single phase async analogue of <see cref="System.Threading.Barrier"/>
+    /// Single phase async analogue of <see cref="System.Threading.Barrier"/>.
     /// </summary>
     public class SinglePhaseAsyncBarrier
     {
@@ -12,7 +12,7 @@ namespace AsyncHelpers
         /// Creates barrier for <paramref name="participantCount"/> participants.
         /// </summary>
         /// <param name="participantCount">Count of the participants.</param>
-        /// <exception cref="ArgumentException">Throws exception if participantCount is incorrest</exception>
+        /// <exception cref="ArgumentException">Throws exception if participantCount is incorrest.</exception>
         public SinglePhaseAsyncBarrier(int participantCount)
         {
             if (participantCount <= 0)
