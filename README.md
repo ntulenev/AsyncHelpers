@@ -212,3 +212,12 @@ await new[] { t1, t2 }.WaitAllTasksButCheckAsync(() =>
     Console.WriteLine("Rise error without waiting 10 seconds for second task.");
 });
 ```
+
+#### TryExecuteWithTimeoutAsync
+Attempts to execute async operation within the expected time.
+
+```C#
+Task task = ...;
+var timeout = 1000;
+var isExecutedInTimeout = await task.TryExecuteWithTimeoutAsync(timeout, CancellationToken.None);
+```
