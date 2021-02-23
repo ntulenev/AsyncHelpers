@@ -191,7 +191,7 @@ B Done
 
 ### TaskExtensions
 
-#### WaitAllTasksButCheck
+#### WaitAllTasksButCheckAsync
 Waits all tasks but invoke OnFaulted if any task is failed.
 
 ```C#
@@ -207,8 +207,17 @@ var t2 = Task.Run(() =>
     Console.WriteLine("T2 Done");
 });
 
-await new[] { t1, t2 }.WaitAllTasksButCheck(() =>
+await new[] { t1, t2 }.WaitAllTasksButCheckAsync(() =>
 {
     Console.WriteLine("Rise error without waiting 10 seconds for second task.");
 });
+```
+
+#### TryExecuteWithTimeoutAsync
+Attempts to execute async operation within the expected time.
+
+```C#
+Task task = ...;
+var timeout = 1000;
+var isExecutedInTimeout = await task.TryExecuteWithTimeoutAsync(timeout, CancellationToken.None);
 ```
