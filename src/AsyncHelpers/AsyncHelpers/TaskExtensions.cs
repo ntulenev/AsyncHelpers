@@ -41,7 +41,7 @@ namespace AsyncHelpers
         }
 
         /// <summary>
-        /// Attempt to execute async operation within the expected time.
+        /// Attempts to execute async operation within the expected time.
         /// </summary>
         /// <param name="task">Task to execute.</param>
         /// <param name="timeout">timeout in ms.</param>
