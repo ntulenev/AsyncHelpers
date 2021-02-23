@@ -106,7 +106,7 @@ namespace AsyncHelpers.Tests
 
             // Act
             var exception = await Record.ExceptionAsync(
-                () => TaskExtensions.TryExecuteWithTimeoutAsync(task,timeout));
+                () => TaskExtensions.TryExecuteWithTimeoutAsync(task, timeout));
 
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -119,7 +119,7 @@ namespace AsyncHelpers.Tests
         public async Task TryExecuteWithTimeoutAsyncExceptionWrongTimeout(int timeout)
         {
             //Arrange
-            Task task = new TaskCompletionSource().Task;
+            Task task = Task.CompletedTask;
 
             // Act
             var exception = await Record.ExceptionAsync(
@@ -145,6 +145,24 @@ namespace AsyncHelpers.Tests
             // Assert
             exception.Should().BeNull();
             result.Should().BeTrue();
+        }
+
+        [Fact(DisplayName = "TryExecuteWithTimeoutAsync works properly with uncompleted task.")]
+        [Trait("Category", "Unit")]
+        public async Task TryExecuteWithTimeoutWorksOnUncompletedTask()
+        {
+            //Arrange
+            Task task = new TaskCompletionSource().Task;
+            var timeout = 1000;
+            bool result = true;
+
+            // Act
+            var exception = await Record.ExceptionAsync(
+                async () => result = await TaskExtensions.TryExecuteWithTimeoutAsync(task, timeout));
+
+            // Assert
+            exception.Should().BeNull();
+            result.Should().BeFalse();
         }
     }
 }
