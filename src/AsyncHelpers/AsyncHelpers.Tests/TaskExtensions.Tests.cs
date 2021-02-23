@@ -111,5 +111,22 @@ namespace AsyncHelpers.Tests
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
         }
+
+        [Theory(DisplayName = "TryExecuteWithTimeoutAsync shoud thow exception when timeout is wrong.")]
+        [Trait("Category", "Unit")]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public async Task TryExecuteWithTimeoutAsyncExceptionWrongTimeout(int timeout)
+        {
+            //Arrange
+            Task task = new TaskCompletionSource().Task;
+
+            // Act
+            var exception = await Record.ExceptionAsync(
+                () => TaskExtensions.TryExecuteWithTimeoutAsync(task, timeout));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
+        }
     }
 }
