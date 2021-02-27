@@ -16,7 +16,7 @@ namespace AsyncHelpers
         {
             lock (_queueGuard)
             {
-                var tcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
+                var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
                 _queue.Enqueue(tcs);
                 return tcs.Task;
             }
@@ -33,7 +33,7 @@ namespace AsyncHelpers
                 if (_queue.Count > 0)
                 {
                     var tcs = _queue.Dequeue();
-                    tcs.SetResult(null!);
+                    tcs.SetResult();
                 }
                 else
                 {
@@ -44,6 +44,6 @@ namespace AsyncHelpers
 
         private readonly object _queueGuard = new();
 
-        private readonly Queue<TaskCompletionSource<object>> _queue = new();
+        private readonly Queue<TaskCompletionSource> _queue = new();
     }
 }
