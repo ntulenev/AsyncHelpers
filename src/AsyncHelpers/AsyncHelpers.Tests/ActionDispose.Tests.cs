@@ -53,5 +53,23 @@ namespace AsyncHelpers.Tests
             isDisposed.Should().BeFalse();
         }
 
+        [Fact(DisplayName = "The ActionDispose runs action after dispose.")]
+        [Trait("Category", "Unit")]
+        public void RunActionAfterDispose()
+        {
+            // Arrange
+            bool isDisposed = false;
+            void action() { isDisposed = true; }
+
+            // Act
+            var result = new ActionDispose(action);
+            result.Dispose();
+
+            // Assert
+            isDisposed.Should().BeTrue();
+        }
+
+
+
     }
 }
