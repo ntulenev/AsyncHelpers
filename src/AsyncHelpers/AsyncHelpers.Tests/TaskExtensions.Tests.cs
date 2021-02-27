@@ -46,10 +46,10 @@ namespace AsyncHelpers.Tests
         public async Task WaitAllWithCorrectTasks()
         {
             //Arrange
-            var tcs1 = new TaskCompletionSource<object>();
+            var tcs1 = new TaskCompletionSource();
             var t1 = tcs1.Task;
 
-            var tcs2 = new TaskCompletionSource<object>();
+            var tcs2 = new TaskCompletionSource();
             var t2 = tcs2.Task;
 
             bool isFailed = false;
@@ -58,8 +58,8 @@ namespace AsyncHelpers.Tests
             var task = TaskExtensions.WaitAllTasksButCheckAsync(new[] { t1, t2 }, () => isFailed = true);
             var timeoutTask = Task.Delay(500); // Attempts to ensure that task will finish.
 
-            tcs1.SetResult(null!);
-            tcs2.SetResult(null!);
+            tcs1.SetResult();
+            tcs2.SetResult();
 
             var result = await Task.WhenAny(task, timeoutTask);
 
@@ -73,10 +73,10 @@ namespace AsyncHelpers.Tests
         public async Task WaitAllWithFailedTasks()
         {
             //Arrange
-            var tcs1 = new TaskCompletionSource<object>();
+            var tcs1 = new TaskCompletionSource();
             var t1 = tcs1.Task;
 
-            var tcs2 = new TaskCompletionSource<object>();
+            var tcs2 = new TaskCompletionSource();
             var t2 = tcs2.Task;
 
             bool isFailed = false;
