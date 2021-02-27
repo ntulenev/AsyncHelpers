@@ -32,8 +32,8 @@ namespace AsyncHelpers
                 {
                     if (_participantCount > 1)
                     {
-                        _tcs.SetResult(null!);
-                        _tcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
+                        _tcs.SetResult();
+                        _tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
                     }
                     _currentCount = 0;
                     return Task.CompletedTask;
@@ -46,7 +46,7 @@ namespace AsyncHelpers
 
         private int _currentCount;
 
-        private TaskCompletionSource<object> _tcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
+        private TaskCompletionSource _tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
         private readonly object _barrierCheckGuard = new object();
     }
