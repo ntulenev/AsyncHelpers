@@ -37,5 +37,21 @@ namespace AsyncHelpers.Tests
             // Assert
             exception.Should().BeNull();
         }
+
+        [Fact(DisplayName = "The ActionDispose don't run action before dispose.")]
+        [Trait("Category", "Unit")]
+        public void DontRunActionBeforeDispose()
+        {
+            // Arrange
+            bool isDisposed = false;
+            void action() { isDisposed = true; }
+
+            // Act
+            var result = new ActionDispose(action);
+
+            // Assert
+            isDisposed.Should().BeFalse();
+        }
+
     }
 }
