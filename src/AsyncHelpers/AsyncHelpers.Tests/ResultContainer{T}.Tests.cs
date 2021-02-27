@@ -53,6 +53,21 @@ namespace AsyncHelpers.Tests
             result.Value.Should().Be(o);
         }
 
+        [Fact(DisplayName = "The ResultContainer dot run action before dispose.")]
+        [Trait("Category", "Unit")]
+        public void DontRunActionBeforeDispose()
+        {
+            // Arrange
+            bool isDisposed = false;
+            void action() { isDisposed = true; }
+
+            // Act
+            var result = new ResultContainer<object>(action, null!);
+            // Assert
+
+            isDisposed.Should().BeFalse();
+        }
+
         [Fact(DisplayName = "The ResultContainer runs action on dispose.")]
         [Trait("Category", "Unit")]
         public void CanRunActionOnDispose()
