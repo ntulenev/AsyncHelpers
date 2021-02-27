@@ -69,6 +69,22 @@ namespace AsyncHelpers.Tests
             isDisposed.Should().BeTrue();
         }
 
+        [Fact(DisplayName = "The ActionDispose runs action on dispose only once.")]
+        [Trait("Category", "Unit")]
+        public void CanRunActionOnDisposeOnce()
+        {
+            // Arrange
+            int countDispose = 0;
+            void action() { countDispose++; }
+
+            // Act
+            var result = new ActionDispose(action);
+            result.Dispose();
+            result.Dispose();
+
+            // Assert
+            countDispose.Should().Be(1);
+        }
 
 
     }
