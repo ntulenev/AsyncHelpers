@@ -8,7 +8,7 @@ namespace AsyncHelpers.Tests
 {
     public class ResultContainerTests
     {
-        [Fact(DisplayName = "The ResultContainer can be constructed with null action.")]
+        [Fact(DisplayName = "The ResultContainer can't be constructed with null action.")]
         [Trait("Category", "Unit")]
         public void CantBeConstructedNullAction()
         {

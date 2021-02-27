@@ -1,12 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using FluentAssertions;
+
+using Xunit;
 
 namespace AsyncHelpers.Tests
 {
-    class ActionDisposeTests
+    public class ActionDisposeTests
     {
+        [Fact(DisplayName = "The ActionDispose can't be constructed with null action.")]
+        [Trait("Category", "Unit")]
+        public void CantBeConstructedNullAction()
+        {
+            // Arrange
+            Action action = null!;
+
+            // Act
+            var exception = Record.Exception(
+                () => new ActionDispose(action));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+        }
     }
 }
