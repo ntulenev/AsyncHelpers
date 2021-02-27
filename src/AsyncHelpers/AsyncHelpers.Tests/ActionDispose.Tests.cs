@@ -22,5 +22,20 @@ namespace AsyncHelpers.Tests
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
         }
+
+        [Fact(DisplayName = "The ActionDispose can be constructed with any action.")]
+        [Trait("Category", "Unit")]
+        public void CantBeConstructedAnyAction()
+        {
+            // Arrange
+            Action action = () => { };
+
+            // Act
+            var exception = Record.Exception(
+                () => new ActionDispose(action));
+
+            // Assert
+            exception.Should().BeNull();
+        }
     }
 }
