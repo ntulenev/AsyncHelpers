@@ -28,7 +28,7 @@ namespace AsyncHelpers.Tests
         public void CantBeConstructedAnyAction()
         {
             // Arrange
-            Action action = () => { };
+            static void action() { }
 
             // Act
             var exception = Record.Exception(
