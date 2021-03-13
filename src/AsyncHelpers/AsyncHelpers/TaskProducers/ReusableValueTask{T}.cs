@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using System.Threading.Tasks.Sources;
 
-namespace AsyncHelpers
+namespace AsyncHelpers.TaskProducers
 {
     /// <summary>
     /// Special <see cref="IValueTaskSource"/> implementation for <see cref="ValueTaskCompletionSource{T}"/>.

@@ -1,5 +1,7 @@
 using System;
 
+using AsyncHelpers.TaskProducers;
+
 using FluentAssertions;
 
 using Xunit;

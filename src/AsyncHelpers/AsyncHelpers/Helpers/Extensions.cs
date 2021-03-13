@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AsyncHelpers
+namespace AsyncHelpers.Helpers
 {
     /// <summary>
     /// Extensions for tasks
     /// </summary>
-    public static class TaskExtensions
+    public static class Extensions
     {
         /// <summary>
         /// Waits all tasks but invoke <paramref name="OnFaulted"/> if any task is failed.

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace AsyncHelpers
+namespace AsyncHelpers.TaskProducers
 {
 
     /// <summary>

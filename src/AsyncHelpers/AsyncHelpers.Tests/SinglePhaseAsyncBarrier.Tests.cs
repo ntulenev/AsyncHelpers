@@ -1,5 +1,7 @@
 ﻿using System;
-using System.Threading.Tasks;
+
+using AsyncHelpers.Synchronization;
+
 using FluentAssertions;
 
 using Xunit;

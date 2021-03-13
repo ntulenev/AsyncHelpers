@@ -1,6 +1,8 @@
 ﻿using System;
 
-namespace AsyncHelpers
+using AsyncHelpers.Helpers;
+
+namespace AsyncHelpers.TaskProducers
 {
     /// <summary>
     /// Container that contains <see cref="RechargeableCompletionSource{T}"/> result. Container should be disposed after result is processed.

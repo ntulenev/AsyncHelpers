@@ -6,9 +6,11 @@ using FluentAssertions;
 
 using Xunit;
 
+using AsyncHelpers.Helpers;
+
 namespace AsyncHelpers.Tests
 {
-    public class TaskExtensionsTests
+    public class ExtensionsTests
     {
         [Fact(DisplayName = "WaitAllTasksButCheck shoud thow exception when tasks are null.")]
         [Trait("Category", "Unit")]
@@ -19,7 +21,7 @@ namespace AsyncHelpers.Tests
 
             // Act
             var exception = await Record.ExceptionAsync(
-                () => TaskExtensions.WaitAllTasksButCheckAsync(tasks, () => { }));
+                () => Extensions.WaitAllTasksButCheckAsync(tasks, () => { }));
 
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -35,7 +37,7 @@ namespace AsyncHelpers.Tests
 
             // Act
             var exception = await Record.ExceptionAsync(
-                () => TaskExtensions.WaitAllTasksButCheckAsync(tasks, a));
+                () => Extensions.WaitAllTasksButCheckAsync(tasks, a));
 
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -55,7 +57,7 @@ namespace AsyncHelpers.Tests
             bool isFailed = false;
 
             // Act
-            var task = TaskExtensions.WaitAllTasksButCheckAsync(new[] { t1, t2 }, () => isFailed = true);
+            var task = Extensions.WaitAllTasksButCheckAsync(new[] { t1, t2 }, () => isFailed = true);
             var timeoutTask = Task.Delay(500); // Attempts to ensure that task will finish.
 
             tcs1.SetResult();
@@ -82,7 +84,7 @@ namespace AsyncHelpers.Tests
             bool isFailed = false;
 
             // Act
-            var task = TaskExtensions.WaitAllTasksButCheckAsync(new[] { t1, t2 }, () =>
+            var task = Extensions.WaitAllTasksButCheckAsync(new[] { t1, t2 }, () =>
             {
                 isFailed = true;
             });
@@ -106,7 +108,7 @@ namespace AsyncHelpers.Tests
 
             // Act
             var exception = await Record.ExceptionAsync(
-                () => TaskExtensions.TryExecuteWithTimeoutAsync(task, timeout));
+                () => Extensions.TryExecuteWithTimeoutAsync(task, timeout));
 
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -123,7 +125,7 @@ namespace AsyncHelpers.Tests
 
             // Act
             var exception = await Record.ExceptionAsync(
-                () => TaskExtensions.TryExecuteWithTimeoutAsync(task, timeout));
+                () => Extensions.TryExecuteWithTimeoutAsync(task, timeout));
 
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
@@ -140,7 +142,7 @@ namespace AsyncHelpers.Tests
 
             // Act
             var exception = await Record.ExceptionAsync(
-                async () => result = await TaskExtensions.TryExecuteWithTimeoutAsync(task, timeout));
+                async () => result = await Extensions.TryExecuteWithTimeoutAsync(task, timeout));
 
             // Assert
             exception.Should().BeNull();
@@ -158,7 +160,7 @@ namespace AsyncHelpers.Tests
 
             // Act
             var exception = await Record.ExceptionAsync(
-                async () => result = await TaskExtensions.TryExecuteWithTimeoutAsync(task, timeout));
+                async () => result = await Extensions.TryExecuteWithTimeoutAsync(task, timeout));
 
             // Assert
             exception.Should().BeNull();

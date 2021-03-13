@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AsyncHelpers
+namespace AsyncHelpers.Helpers
 {
     /// <summary>
     /// Container for action that fill be run on container dispose.

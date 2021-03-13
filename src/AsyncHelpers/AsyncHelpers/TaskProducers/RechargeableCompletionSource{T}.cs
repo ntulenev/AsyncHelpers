@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AsyncHelpers
+namespace AsyncHelpers.TaskProducers
 {
     /// <summary>
     /// <see cref="TaskCompletionSource{TResult}"/> that could be recharge.

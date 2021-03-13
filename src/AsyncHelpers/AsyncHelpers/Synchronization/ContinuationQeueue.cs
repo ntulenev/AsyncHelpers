@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace AsyncHelpers
+namespace AsyncHelpers.Synchronization
 {
     /// <summary>
     /// Queue that registers continuations and runs them one be one.
