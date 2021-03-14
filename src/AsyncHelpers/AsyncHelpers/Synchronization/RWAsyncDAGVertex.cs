@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -78,7 +79,30 @@ namespace AsyncHelpers.Synchronization
         /// </summary>
         public void ValidateGraph()
         {
-            throw new NotImplementedException();
+            var previousNodes = new HashSet<RWAsyncDAGVertex>();
+
+            bool DeepFirstLoopSearch([NotNull] RWAsyncDAGVertex node)
+            {
+                previousNodes.Add(node);
+
+                bool hasLoops = false;
+                foreach (var child in _linkedNodes)
+                {
+                    if (previousNodes.Contains(child) || DeepFirstLoopSearch(child))
+                    {
+                        hasLoops = true;
+                        break;
+                    }
+                }
+
+                previousNodes.Remove(node);
+
+                return hasLoops;
+            }
+
+            var hasLoops = DeepFirstLoopSearch(this);
+            if (hasLoops)
+                throw new InvalidOperationException("Graph contains loops");
         }
 
         private readonly List<RWAsyncDAGVertex> _linkedNodes = new();
