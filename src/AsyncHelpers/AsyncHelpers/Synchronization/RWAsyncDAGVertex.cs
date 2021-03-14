@@ -10,14 +10,11 @@ using Nito.AsyncEx;
 namespace AsyncHelpers.Synchronization
 {
     /// <summary>
-    /// Class in progress....
+    /// Directed acyclic graph node that supports Read/Write async locks on graph.
+    /// Class in progress...
     /// </summary>
-    public class RWAsyncNode
+    public class RWAsyncDAGVertex
     {
-        public RWAsyncNode()
-        {
-        }
-
         public async Task<IDisposable> GetWriteLockAsync(CancellationToken ct)
         {
             var linkedReadLocks = await GetLinkedReadLocksAsync(ct).ConfigureAwait(false);
@@ -69,20 +66,22 @@ namespace AsyncHelpers.Synchronization
             });
         }
 
-        public void AddLink(RWAsyncNode nodeToLink)
+        public void AddEdgesTo(params RWAsyncDAGVertex[] reachableNodes)
         {
-            if (nodeToLink == null)
-                throw new ArgumentNullException(nameof(nodeToLink));
-            _linkedNodes.Add(nodeToLink);
-            nodeToLink.AddLink(this);
+            if (reachableNodes == null)
+                throw new ArgumentNullException(nameof(reachableNodes));
+            _linkedNodes.AddRange(reachableNodes);
         }
 
+        /// <summary>
+        /// Validates directed cycles.
+        /// </summary>
         public void ValidateGraph()
         {
             throw new NotImplementedException();
         }
 
-        private readonly List<RWAsyncNode> _linkedNodes = new();
+        private readonly List<RWAsyncDAGVertex> _linkedNodes = new();
         private readonly AsyncLock _writeLockGuard = new();
         private readonly AsyncCountdownEvent _readLockGuard = new(0);
     }
