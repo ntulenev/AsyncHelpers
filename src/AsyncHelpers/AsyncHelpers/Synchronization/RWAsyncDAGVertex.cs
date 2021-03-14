@@ -71,7 +71,7 @@ namespace AsyncHelpers.Synchronization
         {
             if (reachableNodes == null)
                 throw new ArgumentNullException(nameof(reachableNodes));
-            _linkedNodes.AddRange(reachableNodes);
+            _reachableNodes.AddRange(reachableNodes);
         }
 
         /// <summary>
@@ -86,7 +86,8 @@ namespace AsyncHelpers.Synchronization
                 previousNodes.Add(node);
 
                 bool hasLoops = false;
-                foreach (var child in _linkedNodes)
+
+                foreach (var child in _reachableNodes)
                 {
                     if (previousNodes.Contains(child) || DeepFirstLoopSearch(child))
                     {
@@ -105,7 +106,7 @@ namespace AsyncHelpers.Synchronization
                 throw new InvalidOperationException("Graph contains loops");
         }
 
-        private readonly List<RWAsyncDAGVertex> _linkedNodes = new();
+        private readonly List<RWAsyncDAGVertex> _reachableNodes = new();
         private readonly AsyncLock _writeLockGuard = new();
         private readonly AsyncCountdownEvent _readLockGuard = new(0);
     }
