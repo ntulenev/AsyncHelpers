@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -67,16 +68,25 @@ namespace AsyncHelpers.Synchronization
             });
         }
 
+        /// <summary>
+        /// Add edges to reachable nodes.
+        /// </summary>
+        /// <param name="reachableNodes">Reachable nodes.</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="reachableNodes"/> is null.</exception>
+        /// <exception cref="ArgumentException">If <paramref name="reachableNodes"/> is empty.</exception>
         public void AddEdgesTo(params RWAsyncDAGVertex[] reachableNodes)
         {
             if (reachableNodes == null)
                 throw new ArgumentNullException(nameof(reachableNodes));
+            if (!reachableNodes.Any())
+                throw new ArgumentException("Nodes collection is empty.", nameof(reachableNodes));
             _reachableNodes.AddRange(reachableNodes);
         }
 
         /// <summary>
-        /// Validates directed cycles.
+        /// Validates that graph has no loops and throws <see cref="InvalidOperationException"/> if any.
         /// </summary>
+        /// <exception cref="InvalidOperationException"/>
         public void ValidateGraph()
         {
             var previousNodes = new HashSet<RWAsyncDAGVertex>();
