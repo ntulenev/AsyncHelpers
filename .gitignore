@@ -3,3 +3,5 @@
 /src/AsyncHelpers/.vs
 /src/AsyncHelpers/AsyncHelpers.Tests/obj
 /src/AsyncHelpers/AsyncHelpers.Tests/bin
+/src/AsyncHelpers/AsyncHelpers.Examples/obj
+/src/AsyncHelpers/AsyncHelpers.Examples/bin
