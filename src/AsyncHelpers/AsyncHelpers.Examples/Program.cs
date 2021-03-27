@@ -1,9 +1,10 @@
-﻿using AsyncHelpers.Helpers;
-using AsyncHelpers.Synchronization;
-using AsyncHelpers.TaskProducers;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+
+using AsyncHelpers.Helpers;
+using AsyncHelpers.Synchronization;
+using AsyncHelpers.TaskProducers;
 
 namespace AsyncHelpers.Examples
 {
@@ -13,12 +14,12 @@ namespace AsyncHelpers.Examples
         {
             Console.WriteLine("Hello World!");
 
-            await RechargeableCompletionSourceExampleAsync();
-            //await ValueTaskCompletionSourceExampleAsync();
-            //await SinglePhaseAsyncBarrierExampleAsync();
-            //await ContinuationQueueExampleAsync();
-            //await WaitAllTasksButCheckAsyncExampleAsync();
-            //await TryExecuteWithTimeoutAsyncExampleAsync();
+            await RechargeableCompletionSourceExampleAsync().ConfigureAwait(false);
+            //await ValueTaskCompletionSourceExampleAsync().ConfigureAwait(false);
+            //await SinglePhaseAsyncBarrierExampleAsync().ConfigureAwait(false);
+            //await ContinuationQueueExampleAsync().ConfigureAwait(false);
+            //await WaitAllTasksButCheckAsyncExampleAsync().ConfigureAwait(false);
+            //await TryExecuteWithTimeoutAsyncExampleAsync().ConfigureAwait(false);
         }
 
         static async Task RechargeableCompletionSourceExampleAsync()
@@ -30,7 +31,7 @@ namespace AsyncHelpers.Examples
             {
                 while (true)
                 {
-                    using var data = await rtcs.GetValueAsync();
+                    using var data = await rtcs.GetValueAsync().ConfigureAwait(false);
                     Console.WriteLine($"Get {data.Value} on Thread {Thread.CurrentThread.ManagedThreadId}");
                 }
             });
@@ -48,7 +49,7 @@ namespace AsyncHelpers.Examples
                 }
             });
 
-            await Task.WhenAll(t1, t2);
+            await Task.WhenAll(t1, t2).ConfigureAwait(false);
         }
 
         static async Task ValueTaskCompletionSourceExampleAsync()
@@ -72,13 +73,13 @@ namespace AsyncHelpers.Examples
                 while (true)
                 {
                     ValueTask<int> t = vtcs.Task;
-                    var result = await t;
+                    var result = await t.ConfigureAwait(false);
                     Console.WriteLine($"{result}");
                     are.Set();
                 }
             });
 
-            await Task.WhenAll(t1, t2);
+            await Task.WhenAll(t1, t2).ConfigureAwait(false);
         }
 
         public static async Task SinglePhaseAsyncBarrierExampleAsync()
@@ -89,7 +90,7 @@ namespace AsyncHelpers.Examples
             {
                 Thread.Sleep(1_000);
                 Console.WriteLine("Task A Added");
-                await spb.SignalAndWaitAsync();
+                await spb.SignalAndWaitAsync().ConfigureAwait(false);
                 Console.WriteLine("A Done");
             });
 
@@ -97,7 +98,7 @@ namespace AsyncHelpers.Examples
             {
                 Thread.Sleep(2_000);
                 Console.WriteLine("Task B Added");
-                await spb.SignalAndWaitAsync();
+                await spb.SignalAndWaitAsync().ConfigureAwait(false);
                 Console.WriteLine("B Done");
             });
 
@@ -105,11 +106,11 @@ namespace AsyncHelpers.Examples
             {
                 Thread.Sleep(3_000);
                 Console.WriteLine("Task C Added");
-                await spb.SignalAndWaitAsync();
+                await spb.SignalAndWaitAsync().ConfigureAwait(false);
                 Console.WriteLine("C Done");
             });
 
-            await Task.WhenAll(t1, t2, t3);
+            await Task.WhenAll(t1, t2, t3).ConfigureAwait(false);
         }
         public static async Task ContinuationQueueExampleAsync()
         {
@@ -119,7 +120,7 @@ namespace AsyncHelpers.Examples
             {
                 Thread.Sleep(100);
                 Console.WriteLine("Task A Added");
-                await cq.WaitAsync();
+                await cq.WaitAsync().ConfigureAwait(false);
                 Console.WriteLine("A Done");
             });
 
@@ -127,7 +128,7 @@ namespace AsyncHelpers.Examples
             {
                 Thread.Sleep(200);
                 Console.WriteLine("Task B Added");
-                await cq.WaitAsync();
+                await cq.WaitAsync().ConfigureAwait(false);
                 Console.WriteLine("B Done");
             });
 
@@ -138,7 +139,7 @@ namespace AsyncHelpers.Examples
             Console.WriteLine("FinishTask");
             cq.FinishTask();
 
-            await Task.WhenAll(t1, t2);
+            await Task.WhenAll(t1, t2).ConfigureAwait(false);
         }
 
         public static async Task WaitAllTasksButCheckAsyncExampleAsync()
@@ -158,14 +159,14 @@ namespace AsyncHelpers.Examples
             await new[] { t1, t2 }.WaitAllTasksButCheckAsync(() =>
             {
                 Console.WriteLine("Rise error without waiting 10 seconds for second task.");
-            });
+            }).ConfigureAwait(false);
         }
 
         public static async Task TryExecuteWithTimeoutAsyncExampleAsync()
         {
             Task task = Task.Delay(5000);
             var timeout = 1000;
-            var isExecutedInTimeout = await task.TryExecuteWithTimeoutAsync(timeout, CancellationToken.None);
+            var isExecutedInTimeout = await task.TryExecuteWithTimeoutAsync(timeout, CancellationToken.None).ConfigureAwait(false);
             Console.WriteLine(isExecutedInTimeout);
         }
     }
