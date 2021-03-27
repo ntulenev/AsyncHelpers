@@ -1,4 +1,5 @@
-﻿using AsyncHelpers.Synchronization;
+﻿using AsyncHelpers.Helpers;
+using AsyncHelpers.Synchronization;
 using AsyncHelpers.TaskProducers;
 using System;
 using System.Threading;
@@ -16,6 +17,7 @@ namespace AsyncHelpers.Examples
             //await ValueTaskCompletionSourceExampleAsync();
             //await SinglePhaseAsyncBarrierExampleAsync();
             //await ContinuationQueueExampleAsync();
+            //await WaitAllTasksButCheckAsyncExampleAsync();
             await Task.Yield(); 
         }
 
@@ -137,6 +139,26 @@ namespace AsyncHelpers.Examples
             cq.FinishTask();
 
             await Task.WhenAll(t1, t2);
+        }
+
+        public static async Task WaitAllTasksButCheckAsyncExampleAsync()
+        {
+            var t1 = Task.Run(() =>
+            {
+                Thread.Sleep(1_000);
+                throw new InvalidOperationException();
+            });
+
+            var t2 = Task.Run(() =>
+            {
+                Thread.Sleep(10_000);
+                Console.WriteLine("T2 Done");
+            });
+
+            await new[] { t1, t2 }.WaitAllTasksButCheckAsync(() =>
+            {
+                Console.WriteLine("Rise error without waiting 10 seconds for second task.");
+            });
         }
     }
 }
