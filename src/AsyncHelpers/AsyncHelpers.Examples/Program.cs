@@ -13,20 +13,20 @@ namespace AsyncHelpers.Examples
         {
             Console.WriteLine("Hello World!");
 
-            //RechargeableCompletionSourceExample();
+            await RechargeableCompletionSourceExampleAsync();
             //await ValueTaskCompletionSourceExampleAsync();
             //await SinglePhaseAsyncBarrierExampleAsync();
             //await ContinuationQueueExampleAsync();
             //await WaitAllTasksButCheckAsyncExampleAsync();
-            await Task.Yield(); 
+            //await TryExecuteWithTimeoutAsyncExampleAsync();
         }
 
-        static void RechargeableCompletionSourceExample()
+        static async Task RechargeableCompletionSourceExampleAsync()
         {
             var runContinuationsAsynchronously = false;
             var rtcs = new RechargeableCompletionSource<int>(runContinuationsAsynchronously);
 
-            _ = Task.Run(async () =>
+            var t1 = Task.Run(async () =>
             {
                 while (true)
                 {
@@ -37,7 +37,7 @@ namespace AsyncHelpers.Examples
 
             Thread.Sleep(1000);
 
-            _ = Task.Run(() =>
+            var t2 = Task.Run(() =>
             {
                 int i = 0;
                 while (true)
@@ -48,7 +48,7 @@ namespace AsyncHelpers.Examples
                 }
             });
 
-            Console.ReadKey();
+            await Task.WhenAll(t1, t2);
         }
 
         static async Task ValueTaskCompletionSourceExampleAsync()
@@ -159,6 +159,14 @@ namespace AsyncHelpers.Examples
             {
                 Console.WriteLine("Rise error without waiting 10 seconds for second task.");
             });
+        }
+
+        public static async Task TryExecuteWithTimeoutAsyncExampleAsync()
+        {
+            Task task = Task.Delay(5000);
+            var timeout = 1000;
+            var isExecutedInTimeout = await task.TryExecuteWithTimeoutAsync(timeout, CancellationToken.None);
+            Console.WriteLine(isExecutedInTimeout);
         }
     }
 }
