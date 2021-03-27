@@ -241,7 +241,7 @@ namespace AsyncHelpers.Tests
         {
             // Arrange
             var vertex = new RWAsyncDAGVertex();
-            var _ = await vertex.GetReadLockAsync(CancellationToken.None);
+            _ = await vertex.GetReadLockAsync(CancellationToken.None);
 
             // Act
             var secondLockTask = vertex.GetReadLockAsync(CancellationToken.None);
@@ -446,7 +446,7 @@ namespace AsyncHelpers.Tests
             vertex2.AddEdgesTo(vertex4);
             vertex3.AddEdgesTo(vertex4);
 
-            var _ = await vertex1.GetReadLockAsync(CancellationToken.None);
+            _ = await vertex1.GetReadLockAsync(CancellationToken.None);
 
             // Act
             var lastLockTask = vertex4.GetReadLockAsync(CancellationToken.None);
@@ -468,7 +468,7 @@ namespace AsyncHelpers.Tests
             vertex2.AddEdgesTo(vertex4);
             vertex3.AddEdgesTo(vertex4);
 
-            var _ = await vertex4.GetReadLockAsync(CancellationToken.None);
+            _ = await vertex4.GetReadLockAsync(CancellationToken.None);
 
             // Act
             var firstLockTask = vertex1.GetReadLockAsync(CancellationToken.None);
@@ -490,7 +490,7 @@ namespace AsyncHelpers.Tests
             vertex2.AddEdgesTo(vertex4);
             vertex3.AddEdgesTo(vertex4);
 
-            var _ = await vertex1.GetWriteLockAsync(CancellationToken.None);
+            _ = await vertex1.GetWriteLockAsync(CancellationToken.None);
 
             // Act
             var lastLockTask = vertex4.GetReadLockAsync(CancellationToken.None);
@@ -586,7 +586,7 @@ namespace AsyncHelpers.Tests
 
             // Arrange
             var vertex = new RWAsyncDAGVertex();
-            var firstLock = await vertex.GetWriteLockAsync(cts.Token);
+            _ = await vertex.GetWriteLockAsync(cts.Token);
 
             // Act
             var secondLockTask = vertex.GetWriteLockAsync(cts.Token);
