@@ -7,11 +7,12 @@ namespace AsyncHelpers.Examples
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Console.WriteLine("Hello World!");
 
             //RechargeableCompletionSourceExample();
+            //await ValueTaskCompletionSourceExampleAsync();
         }
 
         static void RechargeableCompletionSourceExample()
@@ -42,6 +43,36 @@ namespace AsyncHelpers.Examples
             });
 
             Console.ReadKey();
+        }
+
+        static async Task ValueTaskCompletionSourceExampleAsync()
+        {
+            ValueTaskCompletionSource<int> vtcs = new ValueTaskCompletionSource<int>(false);
+            AutoResetEvent are = new AutoResetEvent(false);
+
+            var t1 = Task.Run(() =>
+            {
+                int v = 0;
+                while (true)
+                {
+                    Thread.Sleep(1_000); // attempts to execute await t before set result
+                    vtcs.SetResult(v++);
+                    are.WaitOne();
+                }
+            });
+
+            var t2 = Task.Run(async () =>
+            {
+                while (true)
+                {
+                    ValueTask<int> t = vtcs.Task;
+                    var result = await t;
+                    Console.WriteLine($"{result}");
+                    are.Set();
+                }
+            });
+
+            await Task.WhenAll(t1, t2);
         }
     }
 }
