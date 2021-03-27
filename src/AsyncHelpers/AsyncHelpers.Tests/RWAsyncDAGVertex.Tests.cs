@@ -295,11 +295,92 @@ namespace AsyncHelpers.Tests
             secondLockTask.IsCompleted.Should().BeTrue();
         }
 
+
+        [Fact(DisplayName = "Write lock on single node of graph could be taken.")]
+        [Trait("Category", "Unit")]
+        public async Task CanTakeWriteLockOnSingleNodeOfGraphAsync()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            var vertex2 = new RWAsyncDAGVertex();
+            var vertex3 = new RWAsyncDAGVertex();
+            var vertex4 = new RWAsyncDAGVertex();
+            vertex1.AddEdgesTo(vertex2, vertex3);
+            vertex2.AddEdgesTo(vertex4);
+            vertex3.AddEdgesTo(vertex4);
+
+            // Act
+            var exception = await Record.ExceptionAsync(
+                async () => await vertex1.GetWriteLockAsync(CancellationToken.None));
+
+            // Assert
+            exception.Should().BeNull();
+        }
+
+        [Fact(DisplayName = "Write lock on single node of graph could be taken.")]
+        [Trait("Category", "Unit")]
+        public async Task CanTakeReadLockOnSingleNodeOfGraphAsync()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            var vertex2 = new RWAsyncDAGVertex();
+            var vertex3 = new RWAsyncDAGVertex();
+            var vertex4 = new RWAsyncDAGVertex();
+            vertex1.AddEdgesTo(vertex2, vertex3);
+            vertex2.AddEdgesTo(vertex4);
+            vertex3.AddEdgesTo(vertex4);
+
+            // Act
+            var exception = await Record.ExceptionAsync(
+                async () => await vertex1.GetReadLockAsync(CancellationToken.None));
+
+            // Assert
+            exception.Should().BeNull();
+        }
+
+        [Fact(DisplayName = "Write lock on last node of graph could be taken.")]
+        [Trait("Category", "Unit")]
+        public async Task CanTakeWriteLockOnLastNodeOfGraphAsync()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            var vertex2 = new RWAsyncDAGVertex();
+            var vertex3 = new RWAsyncDAGVertex();
+            var vertex4 = new RWAsyncDAGVertex();
+            vertex1.AddEdgesTo(vertex2, vertex3);
+            vertex2.AddEdgesTo(vertex4);
+            vertex3.AddEdgesTo(vertex4);
+
+            // Act
+            var exception = await Record.ExceptionAsync(
+                async () => await vertex4.GetWriteLockAsync(CancellationToken.None));
+
+            // Assert
+            exception.Should().BeNull();
+        }
+
+        [Fact(DisplayName = "Write lock on last node of graph could be taken.")]
+        [Trait("Category", "Unit")]
+        public async Task CanTakeReadLockOnLastNodeOfGraphAsync()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            var vertex2 = new RWAsyncDAGVertex();
+            var vertex3 = new RWAsyncDAGVertex();
+            var vertex4 = new RWAsyncDAGVertex();
+            vertex1.AddEdgesTo(vertex2, vertex3);
+            vertex2.AddEdgesTo(vertex4);
+            vertex3.AddEdgesTo(vertex4);
+
+            // Act
+            var exception = await Record.ExceptionAsync(
+                async () => await vertex4.GetReadLockAsync(CancellationToken.None));
+
+            // Assert
+            exception.Should().BeNull();
+        }
+
         //--5 Items graph (first and last item)--
-        //7) First Write
-        //8) First Read
-        //9) Last Write
-        //10) Last Read
         //11) First Write + Last Write
         //12) Last Write + First Write
         //13) First Read + Last Read
