@@ -26,19 +26,11 @@ namespace AsyncHelpers.Synchronization
         {
             var linkedReadLocks = await GetLinkedReadLocksAsync(ct).ConfigureAwait(false);
 
-            var readLock = await _writeLockGuard.LockAsync(ct).ConfigureAwait(false);
+            var writeLock = await _writeLockGuard.LockAsync(ct).ConfigureAwait(false);
 
             await _readLockGuard.WaitAsync(ct);
 
-            return new ActionDispose(() =>
-            {
-                readLock.Dispose();
-                foreach (var readLock in linkedReadLocks)
-                {
-                    readLock.Dispose();
-                }
-            });
-
+            return CreateLockObject(writeLock, linkedReadLocks);
         }
 
         /// <summary>
@@ -48,18 +40,11 @@ namespace AsyncHelpers.Synchronization
         /// <returns>Lock object.</returns>
         public async Task<IDisposable> GetReadLockAsync(CancellationToken ct)
         {
-            var readHandle = await GetReadLockInternalAsync(ct).ConfigureAwait(false);
-
             var linkedReadLocks = await GetLinkedReadLocksAsync(ct).ConfigureAwait(false);
 
-            return new ActionDispose(() =>
-            {
-                readHandle.Dispose();
-                foreach (var readLock in linkedReadLocks)
-                {
-                    readLock.Dispose();
-                }
-            });
+            var readHandle = await GetReadLockInternalAsync(ct).ConfigureAwait(false);
+
+            return CreateLockObject(readHandle, linkedReadLocks);
         }
 
         /// <summary>
@@ -71,14 +56,21 @@ namespace AsyncHelpers.Synchronization
         public void AddEdgesTo(params RWAsyncDAGVertex[] reachableNodes)
         {
             if (reachableNodes == null)
+            {
                 throw new ArgumentNullException(nameof(reachableNodes));
+            }
+
             if (!reachableNodes.Any())
+            {
                 throw new ArgumentException("Nodes collection is empty.", nameof(reachableNodes));
+            }
 
             foreach (var node in reachableNodes)
             {
                 if (!_reachableNodes.Add(node))
+                {
                     throw new ArgumentException("Attempt to add node that already exists in edges.", nameof(reachableNodes));
+                }
             }
         }
 
@@ -115,6 +107,18 @@ namespace AsyncHelpers.Synchronization
                 throw new InvalidOperationException("Graph contains loops");
         }
 
+        private ActionDispose CreateLockObject(IDisposable mainLock, IEnumerable<IDisposable> dependendLocks)
+        {
+            return new ActionDispose(() =>
+            {
+                mainLock.Dispose();
+                foreach (var dependentLock in dependendLocks)
+                {
+                    dependentLock.Dispose();
+                }
+            });
+        }
+
         private async Task<IEnumerable<IDisposable>> GetLinkedReadLocksAsync(CancellationToken ct)
         {
             List<IDisposable> navegatedNodes = new List<IDisposable>();
@@ -137,7 +141,9 @@ namespace AsyncHelpers.Synchronization
         private async Task<IDisposable> GetReadLockInternalAsync(CancellationToken ct)
         {
             using var _ = await _writeLockGuard.LockAsync(ct).ConfigureAwait(false);
+
             _readLockGuard.AddCount(1);
+
             return new ActionDispose(_readLockGuard.Signal);
         }
 
