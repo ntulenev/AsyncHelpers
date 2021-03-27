@@ -1,4 +1,5 @@
-﻿using AsyncHelpers.TaskProducers;
+﻿using AsyncHelpers.Synchronization;
+using AsyncHelpers.TaskProducers;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +14,9 @@ namespace AsyncHelpers.Examples
 
             //RechargeableCompletionSourceExample();
             //await ValueTaskCompletionSourceExampleAsync();
+            //await SinglePhaseAsyncBarrierExampleAsync();
+
+            await Task.Yield(); 
         }
 
         static void RechargeableCompletionSourceExample()
@@ -73,6 +77,37 @@ namespace AsyncHelpers.Examples
             });
 
             await Task.WhenAll(t1, t2);
+        }
+
+        public static async Task SinglePhaseAsyncBarrierExampleAsync()
+        {
+            SinglePhaseAsyncBarrier spb = new SinglePhaseAsyncBarrier(3);
+
+            var t1 = Task.Run(async () =>
+            {
+                Thread.Sleep(1_000);
+                Console.WriteLine("Task A Added");
+                await spb.SignalAndWaitAsync();
+                Console.WriteLine("A Done");
+            });
+
+            var t2 = Task.Run(async () =>
+            {
+                Thread.Sleep(2_000);
+                Console.WriteLine("Task B Added");
+                await spb.SignalAndWaitAsync();
+                Console.WriteLine("B Done");
+            });
+
+            var t3 = Task.Run(async () =>
+            {
+                Thread.Sleep(3_000);
+                Console.WriteLine("Task C Added");
+                await spb.SignalAndWaitAsync();
+                Console.WriteLine("C Done");
+            });
+
+            await Task.WhenAll(t1, t2, t3);
         }
     }
 }
