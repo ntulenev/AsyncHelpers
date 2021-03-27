@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 using FluentAssertions;
 
@@ -182,14 +184,116 @@ namespace AsyncHelpers.Tests
             exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
         }
 
-        //TODO Test
+        [Fact(DisplayName = "Write lock on single node could be taken.")]
+        [Trait("Category", "Unit")]
+        public async Task CanTakeWriteLockOnSingleNodeAsync()
+        {
+            // Arrange
+            var vertex = new RWAsyncDAGVertex();
 
-        //1) 1 Single item Read lock 
-        //2) 1 Single item Read lock + Read lock
-        //3) 1 Single item Write lock
-        //4) 1 Single item Write lock + Write lock
-        //5) 1 Single item Write lock + Read lock
-        //6) 1 Single item Read lock + Write lock
+            // Act
+            var exception = await Record.ExceptionAsync(
+                async () => await vertex.GetWriteLockAsync(CancellationToken.None));
+
+            // Assert
+            exception.Should().BeNull();
+        }
+
+        [Fact(DisplayName = "Write lock on single node could be taken.")]
+        [Trait("Category", "Unit")]
+        public async Task CanTakeReadLockOnSingleNodeAsync()
+        {
+            // Arrange
+            var vertex = new RWAsyncDAGVertex();
+
+            // Act
+            var exception = await Record.ExceptionAsync(
+                async () => await vertex.GetReadLockAsync(CancellationToken.None));
+
+            // Assert
+            exception.Should().BeNull();
+        }
+
+        [Fact(DisplayName = "Second Write lock on single node could not be taken.")]
+        [Trait("Category", "Unit")]
+        public async Task CantTakeSecondWriteLockOnSingleNodeAsync()
+        {
+            // Arrange
+            var vertex = new RWAsyncDAGVertex();
+            var firstLock = await vertex.GetWriteLockAsync(CancellationToken.None);
+
+            // Act
+            var secondLockTask = vertex.GetWriteLockAsync(CancellationToken.None);
+
+            // Assert
+            secondLockTask.IsCompleted.Should().BeFalse();
+
+            firstLock.Dispose();
+
+            await Task.Delay(500); // Attempts to ensure that task is complete.
+
+            secondLockTask.IsCompleted.Should().BeTrue();
+        }
+
+        [Fact(DisplayName = "Second Read lock on single node could be taken.")]
+        [Trait("Category", "Unit")]
+        public async Task CanTakeSecondReadLockOnSingleNodeAsync()
+        {
+            // Arrange
+            var vertex = new RWAsyncDAGVertex();
+            var firstLock = await vertex.GetReadLockAsync(CancellationToken.None);
+
+            // Act
+            var secondLockTask = vertex.GetReadLockAsync(CancellationToken.None);
+
+            // Assert
+
+            await Task.Delay(500); // Attempts to ensure that task is complete.
+
+            secondLockTask.IsCompleted.Should().BeTrue();
+        }
+
+        [Fact(DisplayName = "Second Read lock after Write on single node could not be taken.")]
+        [Trait("Category", "Unit")]
+        public async Task CantTakeSecondReadLockAfterWriteOnSingleNodeAsync()
+        {
+            // Arrange
+            var vertex = new RWAsyncDAGVertex();
+            var firstLock = await vertex.GetWriteLockAsync(CancellationToken.None);
+
+            // Act
+            var secondLockTask = vertex.GetReadLockAsync(CancellationToken.None);
+
+            // Assert
+            secondLockTask.IsCompleted.Should().BeFalse();
+
+            firstLock.Dispose();
+
+            await Task.Delay(500); // Attempts to ensure that task is complete.
+
+            secondLockTask.IsCompleted.Should().BeTrue();
+        }
+
+        [Fact(DisplayName = "Second Write lock after Read on single node could not be taken.")]
+        [Trait("Category", "Unit")]
+        public async Task CantTakeSecondWriteLockAfterReadOnSingleNodeAsync()
+        {
+            // Arrange
+            var vertex = new RWAsyncDAGVertex();
+            var firstLock = await vertex.GetReadLockAsync(CancellationToken.None);
+
+            // Act
+            var secondLockTask = vertex.GetWriteLockAsync(CancellationToken.None);
+
+            // Assert
+            secondLockTask.IsCompleted.Should().BeFalse();
+
+            firstLock.Dispose();
+
+            await Task.Delay(500); // Attempts to ensure that task is complete.
+
+            secondLockTask.IsCompleted.Should().BeTrue();
+        }
 
         //--5 Items graph (first and last item)--
         //7) First Write
