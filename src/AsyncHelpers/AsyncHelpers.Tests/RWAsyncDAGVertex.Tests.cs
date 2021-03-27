@@ -193,7 +193,7 @@ namespace AsyncHelpers.Tests
 
             // Act
             var exception = await Record.ExceptionAsync(
-                async () => await vertex.GetWriteLockAsync(CancellationToken.None));
+                async () => await vertex.GetWriteLockAsync(CancellationToken.None).ConfigureAwait(false)).ConfigureAwait(false);
 
             // Assert
             exception.Should().BeNull();
@@ -208,7 +208,7 @@ namespace AsyncHelpers.Tests
 
             // Act
             var exception = await Record.ExceptionAsync(
-                async () => await vertex.GetReadLockAsync(CancellationToken.None));
+                async () => await vertex.GetReadLockAsync(CancellationToken.None).ConfigureAwait(false)).ConfigureAwait(false);
 
             // Assert
             exception.Should().BeNull();
@@ -220,7 +220,7 @@ namespace AsyncHelpers.Tests
         {
             // Arrange
             var vertex = new RWAsyncDAGVertex();
-            var firstLock = await vertex.GetWriteLockAsync(CancellationToken.None);
+            var firstLock = await vertex.GetWriteLockAsync(CancellationToken.None).ConfigureAwait(false);
 
             // Act
             var secondLockTask = vertex.GetWriteLockAsync(CancellationToken.None);
@@ -230,7 +230,7 @@ namespace AsyncHelpers.Tests
 
             firstLock.Dispose();
 
-            await Task.Delay(500); // Attempts to ensure that task is complete.
+            await Task.Delay(500).ConfigureAwait(false); // Attempts to ensure that task is complete.
 
             secondLockTask.IsCompleted.Should().BeTrue();
         }
@@ -241,7 +241,7 @@ namespace AsyncHelpers.Tests
         {
             // Arrange
             var vertex = new RWAsyncDAGVertex();
-            _ = await vertex.GetReadLockAsync(CancellationToken.None);
+            _ = await vertex.GetReadLockAsync(CancellationToken.None).ConfigureAwait(false);
 
             // Act
             var secondLockTask = vertex.GetReadLockAsync(CancellationToken.None);
@@ -256,7 +256,7 @@ namespace AsyncHelpers.Tests
         {
             // Arrange
             var vertex = new RWAsyncDAGVertex();
-            var firstLock = await vertex.GetWriteLockAsync(CancellationToken.None);
+            var firstLock = await vertex.GetWriteLockAsync(CancellationToken.None).ConfigureAwait(false);
 
             // Act
             var secondLockTask = vertex.GetReadLockAsync(CancellationToken.None);
@@ -266,7 +266,7 @@ namespace AsyncHelpers.Tests
 
             firstLock.Dispose();
 
-            await Task.Delay(500); // Attempts to ensure that task is complete.
+            await Task.Delay(500).ConfigureAwait(false); // Attempts to ensure that task is complete.
 
             secondLockTask.IsCompleted.Should().BeTrue();
         }
@@ -277,7 +277,7 @@ namespace AsyncHelpers.Tests
         {
             // Arrange
             var vertex = new RWAsyncDAGVertex();
-            var firstLock = await vertex.GetReadLockAsync(CancellationToken.None);
+            var firstLock = await vertex.GetReadLockAsync(CancellationToken.None).ConfigureAwait(false);
 
             // Act
             var secondLockTask = vertex.GetWriteLockAsync(CancellationToken.None);
@@ -287,7 +287,7 @@ namespace AsyncHelpers.Tests
 
             firstLock.Dispose();
 
-            await Task.Delay(500); // Attempts to ensure that task is complete.
+            await Task.Delay(500).ConfigureAwait(false); // Attempts to ensure that task is complete.
 
             secondLockTask.IsCompleted.Should().BeTrue();
         }
@@ -308,7 +308,7 @@ namespace AsyncHelpers.Tests
 
             // Act
             var exception = await Record.ExceptionAsync(
-                async () => await vertex1.GetWriteLockAsync(CancellationToken.None));
+                async () => await vertex1.GetWriteLockAsync(CancellationToken.None).ConfigureAwait(false)).ConfigureAwait(false);
 
             // Assert
             exception.Should().BeNull();
@@ -329,7 +329,7 @@ namespace AsyncHelpers.Tests
 
             // Act
             var exception = await Record.ExceptionAsync(
-                async () => await vertex1.GetReadLockAsync(CancellationToken.None));
+                async () => await vertex1.GetReadLockAsync(CancellationToken.None).ConfigureAwait(false)).ConfigureAwait(false);
 
             // Assert
             exception.Should().BeNull();
@@ -350,7 +350,7 @@ namespace AsyncHelpers.Tests
 
             // Act
             var exception = await Record.ExceptionAsync(
-                async () => await vertex4.GetWriteLockAsync(CancellationToken.None));
+                async () => await vertex4.GetWriteLockAsync(CancellationToken.None).ConfigureAwait(false)).ConfigureAwait(false);
 
             // Assert
             exception.Should().BeNull();
@@ -371,7 +371,7 @@ namespace AsyncHelpers.Tests
 
             // Act
             var exception = await Record.ExceptionAsync(
-                async () => await vertex4.GetReadLockAsync(CancellationToken.None));
+                async () => await vertex4.GetReadLockAsync(CancellationToken.None).ConfigureAwait(false)).ConfigureAwait(false);
 
             // Assert
             exception.Should().BeNull();
@@ -390,7 +390,7 @@ namespace AsyncHelpers.Tests
             vertex2.AddEdgesTo(vertex4);
             vertex3.AddEdgesTo(vertex4);
 
-            var firstLock = await vertex1.GetWriteLockAsync(CancellationToken.None);
+            var firstLock = await vertex1.GetWriteLockAsync(CancellationToken.None).ConfigureAwait(false);
 
             // Act
             var lastLockTask = vertex4.GetWriteLockAsync(CancellationToken.None);
@@ -400,7 +400,7 @@ namespace AsyncHelpers.Tests
 
             firstLock.Dispose();
 
-            await Task.Delay(500); // Attempts to ensure that task is complete.
+            await Task.Delay(500).ConfigureAwait(false); // Attempts to ensure that task is complete.
 
             lastLockTask.IsCompleted.Should().BeTrue();
         }
@@ -418,7 +418,7 @@ namespace AsyncHelpers.Tests
             vertex2.AddEdgesTo(vertex4);
             vertex3.AddEdgesTo(vertex4);
 
-            var lastLock = await vertex4.GetWriteLockAsync(CancellationToken.None);
+            var lastLock = await vertex4.GetWriteLockAsync(CancellationToken.None).ConfigureAwait(false);
 
             // Act
             var firstLockTask = vertex1.GetWriteLockAsync(CancellationToken.None);
@@ -428,7 +428,7 @@ namespace AsyncHelpers.Tests
 
             lastLock.Dispose();
 
-            await Task.Delay(500); // Attempts to ensure that task is complete.
+            await Task.Delay(500).ConfigureAwait(false); // Attempts to ensure that task is complete.
 
             firstLockTask.IsCompleted.Should().BeTrue();
         }
@@ -446,7 +446,7 @@ namespace AsyncHelpers.Tests
             vertex2.AddEdgesTo(vertex4);
             vertex3.AddEdgesTo(vertex4);
 
-            _ = await vertex1.GetReadLockAsync(CancellationToken.None);
+            _ = await vertex1.GetReadLockAsync(CancellationToken.None).ConfigureAwait(false);
 
             // Act
             var lastLockTask = vertex4.GetReadLockAsync(CancellationToken.None);
@@ -468,7 +468,7 @@ namespace AsyncHelpers.Tests
             vertex2.AddEdgesTo(vertex4);
             vertex3.AddEdgesTo(vertex4);
 
-            _ = await vertex4.GetReadLockAsync(CancellationToken.None);
+            _ = await vertex4.GetReadLockAsync(CancellationToken.None).ConfigureAwait(false);
 
             // Act
             var firstLockTask = vertex1.GetReadLockAsync(CancellationToken.None);
@@ -490,7 +490,7 @@ namespace AsyncHelpers.Tests
             vertex2.AddEdgesTo(vertex4);
             vertex3.AddEdgesTo(vertex4);
 
-            _ = await vertex1.GetWriteLockAsync(CancellationToken.None);
+            _ = await vertex1.GetWriteLockAsync(CancellationToken.None).ConfigureAwait(false);
 
             // Act
             var lastLockTask = vertex4.GetReadLockAsync(CancellationToken.None);
@@ -512,7 +512,7 @@ namespace AsyncHelpers.Tests
             vertex2.AddEdgesTo(vertex4);
             vertex3.AddEdgesTo(vertex4);
 
-            var lastLock = await vertex4.GetWriteLockAsync(CancellationToken.None);
+            var lastLock = await vertex4.GetWriteLockAsync(CancellationToken.None).ConfigureAwait(false);
 
             // Act
             var firstLockTask = vertex1.GetReadLockAsync(CancellationToken.None);
@@ -522,7 +522,7 @@ namespace AsyncHelpers.Tests
 
             lastLock.Dispose();
 
-            await Task.Delay(500); // Attempts to ensure that task is complete.
+            await Task.Delay(500).ConfigureAwait(false); // Attempts to ensure that task is complete.
 
             firstLockTask.IsCompleted.Should().BeTrue();
         }
@@ -540,7 +540,7 @@ namespace AsyncHelpers.Tests
             vertex2.AddEdgesTo(vertex4);
             vertex3.AddEdgesTo(vertex4);
 
-            var firstLock = await vertex1.GetReadLockAsync(CancellationToken.None);
+            var firstLock = await vertex1.GetReadLockAsync(CancellationToken.None).ConfigureAwait(false);
 
             // Act
             var lastLockTask = vertex4.GetWriteLockAsync(CancellationToken.None);
@@ -550,7 +550,7 @@ namespace AsyncHelpers.Tests
 
             firstLock.Dispose();
 
-            await Task.Delay(500); // Attempts to ensure that task is complete.
+            await Task.Delay(500).ConfigureAwait(false); // Attempts to ensure that task is complete.
 
             lastLockTask.IsCompleted.Should().BeTrue();
         }
@@ -568,7 +568,7 @@ namespace AsyncHelpers.Tests
             vertex2.AddEdgesTo(vertex4);
             vertex3.AddEdgesTo(vertex4);
 
-            var lastTask = await vertex4.GetReadLockAsync(CancellationToken.None);
+            var _ = await vertex4.GetReadLockAsync(CancellationToken.None).ConfigureAwait(false);
 
             // Act
             var firstLockTask = vertex1.GetWriteLockAsync(CancellationToken.None);
@@ -587,7 +587,7 @@ namespace AsyncHelpers.Tests
             // Arrange
             var vertex = new RWAsyncDAGVertex();
 
-            _ = await vertex.GetWriteLockAsync(cts.Token);
+            _ = await vertex.GetWriteLockAsync(cts.Token).ConfigureAwait(false);
 
             // Act
             var secondLockTask = vertex.GetWriteLockAsync(cts.Token);
@@ -597,7 +597,7 @@ namespace AsyncHelpers.Tests
 
             cts.Cancel();
 
-            await Task.Delay(500); // Attempts to ensure that task is complete.
+            await Task.Delay(500).ConfigureAwait(false); // Attempts to ensure that task is complete.
 
             secondLockTask.IsCanceled.Should().BeTrue();
         }
