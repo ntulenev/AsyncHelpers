@@ -17,6 +17,11 @@ namespace AsyncHelpers.Synchronization
     /// </summary>
     public class RWAsyncDAGVertex
     {
+        /// <summary>
+        /// Gets white lock on current node.
+        /// </summary>
+        /// <param name="ct">Token to cancel.</param>
+        /// <returns>Lock object.</returns>
         public async Task<IDisposable> GetWriteLockAsync(CancellationToken ct)
         {
             var linkedReadLocks = await GetLinkedReadLocksAsync(ct).ConfigureAwait(false);
@@ -36,22 +41,11 @@ namespace AsyncHelpers.Synchronization
 
         }
 
-        private async Task<IEnumerable<IDisposable>> GetLinkedReadLocksAsync(CancellationToken ct)
-        {
-            //Get all nods from graph
-            //Execute Read lock on every item
-            //Return read handles
-            await Task.Yield();
-            throw new NotImplementedException();
-        }
-
-        private async Task<IDisposable> GetReadLockInternalAsync(CancellationToken ct)
-        {
-            using var _ = await _writeLockGuard.LockAsync(ct).ConfigureAwait(false);
-            _readLockGuard.AddCount(1);
-            return new ActionDispose(_readLockGuard.Signal);
-        }
-
+        /// <summary>
+        /// Get read lock on current node.
+        /// </summary>
+        /// <param name="ct">Token to cancel.</param>
+        /// <returns>Lock object.</returns>
         public async Task<IDisposable> GetReadLockAsync(CancellationToken ct)
         {
             var readHandle = await GetReadLockInternalAsync(ct).ConfigureAwait(false);
@@ -119,6 +113,32 @@ namespace AsyncHelpers.Synchronization
             var hasLoops = DeepFirstLoopSearch(this);
             if (hasLoops)
                 throw new InvalidOperationException("Graph contains loops");
+        }
+
+        private async Task<IEnumerable<IDisposable>> GetLinkedReadLocksAsync(CancellationToken ct)
+        {
+            List<IDisposable> navegatedNodes = new List<IDisposable>();
+
+            async Task GetAllPathsAsync(RWAsyncDAGVertex root)
+            {
+                foreach (var edge in root._reachableNodes)
+                {
+
+                    navegatedNodes.Add(await edge.GetReadLockInternalAsync(ct).ConfigureAwait(false));
+                    await GetAllPathsAsync(edge).ConfigureAwait(false);
+                }
+            }
+
+            await GetAllPathsAsync(this).ConfigureAwait(false);
+
+            return navegatedNodes;
+        }
+
+        private async Task<IDisposable> GetReadLockInternalAsync(CancellationToken ct)
+        {
+            using var _ = await _writeLockGuard.LockAsync(ct).ConfigureAwait(false);
+            _readLockGuard.AddCount(1);
+            return new ActionDispose(_readLockGuard.Signal);
         }
 
         private readonly HashSet<RWAsyncDAGVertex> _reachableNodes = new();
