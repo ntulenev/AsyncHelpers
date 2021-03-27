@@ -87,7 +87,7 @@ namespace AsyncHelpers.Synchronization
 
                 bool hasLoops = false;
 
-                foreach (var child in _reachableNodes)
+                foreach (var child in node._reachableNodes)
                 {
                     if (previousNodes.Contains(child) || DeepFirstLoopSearch(child))
                     {
