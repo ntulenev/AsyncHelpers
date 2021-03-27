@@ -131,7 +131,6 @@ namespace AsyncHelpers.Synchronization
             {
                 foreach (var edge in root._reachableNodes)
                 {
-
                     navegatedNodes.Add(await edge.GetReadLockInternalAsync(ct).ConfigureAwait(false));
                     await GetAllPathsAsync(edge).ConfigureAwait(false);
                 }
