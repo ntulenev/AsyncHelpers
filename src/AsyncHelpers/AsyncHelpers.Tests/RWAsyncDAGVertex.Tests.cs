@@ -586,6 +586,7 @@ namespace AsyncHelpers.Tests
 
             // Arrange
             var vertex = new RWAsyncDAGVertex();
+
             _ = await vertex.GetWriteLockAsync(cts.Token);
 
             // Act
