@@ -181,5 +181,33 @@ namespace AsyncHelpers.Tests
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
         }
+
+        //TODO Test
+
+        //1) 1 Single item Read lock 
+        //2) 1 Single item Read lock + Read lock
+        //3) 1 Single item Write lock
+        //4) 1 Single item Write lock + Write lock
+        //5) 1 Single item Write lock + Read lock
+        //6) 1 Single item Read lock + Write lock
+
+        //--5 Items graph (first and last item)--
+        //7) First Write
+        //8) First Read
+        //9) Last Write
+        //10) Last Read
+        //11) First Write + Last Write
+        //12) Last Write + First Write
+        //13) First Read + Last Read
+        //14) Last Read + First Read
+        //15) First Read + Last Write
+        //16) Last Read + First Write
+        //17) First Write + Last Read
+        //18) Last Write + First Read
+
+        //19) Cancellation Token cancell case
+
+
+
     }
 }
