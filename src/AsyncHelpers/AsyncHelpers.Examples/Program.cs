@@ -15,7 +15,7 @@ namespace AsyncHelpers.Examples
             //RechargeableCompletionSourceExample();
             //await ValueTaskCompletionSourceExampleAsync();
             //await SinglePhaseAsyncBarrierExampleAsync();
-
+            //await ContinuationQueueExampleAsync();
             await Task.Yield(); 
         }
 
@@ -108,6 +108,35 @@ namespace AsyncHelpers.Examples
             });
 
             await Task.WhenAll(t1, t2, t3);
+        }
+        public static async Task ContinuationQueueExampleAsync()
+        {
+            ContinuationQueue cq = new ContinuationQueue();
+
+            var t1 = Task.Run(async () =>
+            {
+                Thread.Sleep(100);
+                Console.WriteLine("Task A Added");
+                await cq.WaitAsync();
+                Console.WriteLine("A Done");
+            });
+
+            var t2 = Task.Run(async () =>
+            {
+                Thread.Sleep(200);
+                Console.WriteLine("Task B Added");
+                await cq.WaitAsync();
+                Console.WriteLine("B Done");
+            });
+
+            Thread.Sleep(1_000);
+            Console.WriteLine("FinishTask");
+            cq.FinishTask();
+            Thread.Sleep(1_000);
+            Console.WriteLine("FinishTask");
+            cq.FinishTask();
+
+            await Task.WhenAll(t1, t2);
         }
     }
 }
