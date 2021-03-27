@@ -66,6 +66,11 @@ namespace AsyncHelpers.Synchronization
 
             foreach (var node in reachableNodes)
             {
+                if (node is null)
+                {
+                    throw new ArgumentException("Some of nodes is null.", nameof(reachableNodes));
+                }
+
                 if (!_reachableNodes.Add(node))
                 {
                     throw new ArgumentException("Attempt to add node that already exists in edges.", nameof(reachableNodes));

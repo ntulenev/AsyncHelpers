@@ -99,5 +99,87 @@ namespace AsyncHelpers.Tests
             // Assert
             exception.Should().NotBeNull().And.BeOfType<InvalidOperationException>();
         }
+
+        [Fact(DisplayName = "Edge could be added to the graph.")]
+        [Trait("Category", "Unit")]
+        public void CanAddEdgeToTheGraph()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            var vertex2 = new RWAsyncDAGVertex();
+
+            // Act
+            var exception = Record.Exception(
+                () => vertex1.AddEdgesTo(vertex2));
+
+            // Assert
+            exception.Should().BeNull();
+        }
+
+        [Fact(DisplayName = "Null edge could not be added to the graph.")]
+        [Trait("Category", "Unit")]
+        public void CantAddNullEdgeToTheGraph()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            RWAsyncDAGVertex vertex2 = null!;
+
+            // Act
+            var exception = Record.Exception(
+                () => vertex1.AddEdgesTo(vertex2));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
+        }
+
+        [Fact(DisplayName = "Null edges could not be added to the graph.")]
+        [Trait("Category", "Unit")]
+        public void CantAddNullEdgesToTheGraph()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            RWAsyncDAGVertex[] vertexArray = null!;
+
+            // Act
+            var exception = Record.Exception(
+                () => vertex1.AddEdgesTo(vertexArray));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+        }
+
+        [Fact(DisplayName = "Empty edges array could not be added to the graph.")]
+        [Trait("Category", "Unit")]
+        public void CantAddEmptyEdgesToTheGraph()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            RWAsyncDAGVertex[] vertexArray = Array.Empty<RWAsyncDAGVertex>();
+
+            // Act
+            var exception = Record.Exception(
+                () => vertex1.AddEdgesTo(vertexArray));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
+        }
+
+
+        [Fact(DisplayName = "Duplicated edge could not be added to the graph.")]
+        [Trait("Category", "Unit")]
+        public void CantAddDuplicatedEdgeToTheGraph()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            var vertex2 = new RWAsyncDAGVertex();
+            vertex1.AddEdgesTo(vertex2);
+
+            // Act
+            var exception = Record.Exception(
+                () => vertex1.AddEdgesTo(vertex2));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
+        }
     }
 }
