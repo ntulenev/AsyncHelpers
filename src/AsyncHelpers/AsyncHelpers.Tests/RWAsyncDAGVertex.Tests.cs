@@ -241,15 +241,12 @@ namespace AsyncHelpers.Tests
         {
             // Arrange
             var vertex = new RWAsyncDAGVertex();
-            var firstLock = await vertex.GetReadLockAsync(CancellationToken.None);
+            var _ = await vertex.GetReadLockAsync(CancellationToken.None);
 
             // Act
             var secondLockTask = vertex.GetReadLockAsync(CancellationToken.None);
 
             // Assert
-
-            await Task.Delay(500); // Attempts to ensure that task is complete.
-
             secondLockTask.IsCompleted.Should().BeTrue();
         }
 
@@ -380,19 +377,229 @@ namespace AsyncHelpers.Tests
             exception.Should().BeNull();
         }
 
-        //--5 Items graph (first and last item)--
-        //11) First Write + Last Write
-        //12) Last Write + First Write
-        //13) First Read + Last Read
-        //14) Last Read + First Read
-        //15) First Read + Last Write
-        //16) Last Read + First Write
-        //17) First Write + Last Read
-        //18) Last Write + First Read
+        [Fact(DisplayName = "Write lock on last node of graph could not be taken if first has write lock.")]
+        [Trait("Category", "Unit")]
+        public async Task CantTakeWriteLockOnLastNodeOfGraphAsync()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            var vertex2 = new RWAsyncDAGVertex();
+            var vertex3 = new RWAsyncDAGVertex();
+            var vertex4 = new RWAsyncDAGVertex();
+            vertex1.AddEdgesTo(vertex2, vertex3);
+            vertex2.AddEdgesTo(vertex4);
+            vertex3.AddEdgesTo(vertex4);
 
-        //19) Cancellation Token cancell case
+            var firstLock = await vertex1.GetWriteLockAsync(CancellationToken.None);
 
+            // Act
+            var lastLockTask = vertex4.GetWriteLockAsync(CancellationToken.None);
 
+            // Assert
+            lastLockTask.IsCompleted.Should().BeFalse();
+
+            firstLock.Dispose();
+
+            await Task.Delay(500); // Attempts to ensure that task is complete.
+
+            lastLockTask.IsCompleted.Should().BeTrue();
+        }
+
+        [Fact(DisplayName = "Write lock on first node of graph could not be taken if last has write lock.")]
+        [Trait("Category", "Unit")]
+        public async Task CantTakeWriteLockOnFirstNodeOfGraphAsync()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            var vertex2 = new RWAsyncDAGVertex();
+            var vertex3 = new RWAsyncDAGVertex();
+            var vertex4 = new RWAsyncDAGVertex();
+            vertex1.AddEdgesTo(vertex2, vertex3);
+            vertex2.AddEdgesTo(vertex4);
+            vertex3.AddEdgesTo(vertex4);
+
+            var lastLock = await vertex4.GetWriteLockAsync(CancellationToken.None);
+
+            // Act
+            var firstLockTask = vertex1.GetWriteLockAsync(CancellationToken.None);
+
+            // Assert
+            firstLockTask.IsCompleted.Should().BeFalse();
+
+            lastLock.Dispose();
+
+            await Task.Delay(500); // Attempts to ensure that task is complete.
+
+            firstLockTask.IsCompleted.Should().BeTrue();
+        }
+
+        [Fact(DisplayName = "Read lock on last node of graph could be taken if fist has read lock.")]
+        [Trait("Category", "Unit")]
+        public async Task CanTakeReadLockOnLastNodeOfGraphIfFirstReadLockAsync()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            var vertex2 = new RWAsyncDAGVertex();
+            var vertex3 = new RWAsyncDAGVertex();
+            var vertex4 = new RWAsyncDAGVertex();
+            vertex1.AddEdgesTo(vertex2, vertex3);
+            vertex2.AddEdgesTo(vertex4);
+            vertex3.AddEdgesTo(vertex4);
+
+            var _ = await vertex1.GetReadLockAsync(CancellationToken.None);
+
+            // Act
+            var lastLockTask = vertex4.GetReadLockAsync(CancellationToken.None);
+
+            // Assert
+            lastLockTask.IsCompleted.Should().BeTrue();
+        }
+
+        [Fact(DisplayName = "Read lock on last node of graph could be taken if fisrt has read lock.")]
+        [Trait("Category", "Unit")]
+        public async Task CanTakeReadLockOnFirstNodeOfGraphIfLastReadLockAsync()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            var vertex2 = new RWAsyncDAGVertex();
+            var vertex3 = new RWAsyncDAGVertex();
+            var vertex4 = new RWAsyncDAGVertex();
+            vertex1.AddEdgesTo(vertex2, vertex3);
+            vertex2.AddEdgesTo(vertex4);
+            vertex3.AddEdgesTo(vertex4);
+
+            var _ = await vertex4.GetReadLockAsync(CancellationToken.None);
+
+            // Act
+            var firstLockTask = vertex1.GetReadLockAsync(CancellationToken.None);
+
+            // Assert
+            firstLockTask.IsCompleted.Should().BeTrue();
+        }
+
+        [Fact(DisplayName = "Read lock on last node of graph could be taken if fisrt has write lock.")]
+        [Trait("Category", "Unit")]
+        public async Task CanTakeReadLockOnLastNodeOfGraphIfFirstWriteLockAsync()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            var vertex2 = new RWAsyncDAGVertex();
+            var vertex3 = new RWAsyncDAGVertex();
+            var vertex4 = new RWAsyncDAGVertex();
+            vertex1.AddEdgesTo(vertex2, vertex3);
+            vertex2.AddEdgesTo(vertex4);
+            vertex3.AddEdgesTo(vertex4);
+
+            var _ = await vertex1.GetWriteLockAsync(CancellationToken.None);
+
+            // Act
+            var lastLockTask = vertex4.GetReadLockAsync(CancellationToken.None);
+
+            // Assert
+            lastLockTask.IsCompleted.Should().BeTrue();
+        }
+
+        [Fact(DisplayName = "Read lock on first node of graph could not be taken if last has write lock.")]
+        [Trait("Category", "Unit")]
+        public async Task CantTakeReadLockOnFirstNodeOfGraphIfLastWriteLockAsync()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            var vertex2 = new RWAsyncDAGVertex();
+            var vertex3 = new RWAsyncDAGVertex();
+            var vertex4 = new RWAsyncDAGVertex();
+            vertex1.AddEdgesTo(vertex2, vertex3);
+            vertex2.AddEdgesTo(vertex4);
+            vertex3.AddEdgesTo(vertex4);
+
+            var lastLock = await vertex4.GetWriteLockAsync(CancellationToken.None);
+
+            // Act
+            var firstLockTask = vertex1.GetReadLockAsync(CancellationToken.None);
+
+            // Assert
+            firstLockTask.IsCompleted.Should().BeFalse();
+
+            lastLock.Dispose();
+
+            await Task.Delay(500); // Attempts to ensure that task is complete.
+
+            firstLockTask.IsCompleted.Should().BeTrue();
+        }
+
+        [Fact(DisplayName = "Write lock on last node of graph could not be taken if first has read lock.")]
+        [Trait("Category", "Unit")]
+        public async Task CantTakeWriteLockOnLastNodeOfGraphIfFirstReadLockAsync()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            var vertex2 = new RWAsyncDAGVertex();
+            var vertex3 = new RWAsyncDAGVertex();
+            var vertex4 = new RWAsyncDAGVertex();
+            vertex1.AddEdgesTo(vertex2, vertex3);
+            vertex2.AddEdgesTo(vertex4);
+            vertex3.AddEdgesTo(vertex4);
+
+            var firstLock = await vertex1.GetReadLockAsync(CancellationToken.None);
+
+            // Act
+            var lastLockTask = vertex4.GetWriteLockAsync(CancellationToken.None);
+
+            // Assert
+            lastLockTask.IsCompleted.Should().BeFalse();
+
+            firstLock.Dispose();
+
+            await Task.Delay(500); // Attempts to ensure that task is complete.
+
+            lastLockTask.IsCompleted.Should().BeTrue();
+        }
+
+        [Fact(DisplayName = "Write lock on first node of graph could be taken if last has read lock.")]
+        [Trait("Category", "Unit")]
+        public async Task CanTakeWriteLockOnFirstNodeOfGraphIfLastReadLockAsync()
+        {
+            // Arrange
+            var vertex1 = new RWAsyncDAGVertex();
+            var vertex2 = new RWAsyncDAGVertex();
+            var vertex3 = new RWAsyncDAGVertex();
+            var vertex4 = new RWAsyncDAGVertex();
+            vertex1.AddEdgesTo(vertex2, vertex3);
+            vertex2.AddEdgesTo(vertex4);
+            vertex3.AddEdgesTo(vertex4);
+
+            var lastTask = await vertex4.GetReadLockAsync(CancellationToken.None);
+
+            // Act
+            var firstLockTask = vertex1.GetWriteLockAsync(CancellationToken.None);
+
+            // Assert
+            firstLockTask.IsCompleted.Should().BeTrue();
+        }
+
+        [Fact(DisplayName = "Locks is cancelled if token is cancelled.")]
+        [Trait("Category", "Unit")]
+        public async Task LocksIfCanceledIfTokenIsCancelled()
+        {
+
+            var cts = new CancellationTokenSource();
+
+            // Arrange
+            var vertex = new RWAsyncDAGVertex();
+            var firstLock = await vertex.GetWriteLockAsync(cts.Token);
+
+            // Act
+            var secondLockTask = vertex.GetWriteLockAsync(cts.Token);
+
+            // Assert
+            secondLockTask.IsCompleted.Should().BeFalse();
+
+            cts.Cancel();
+
+            await Task.Delay(500); // Attempts to ensure that task is complete.
+
+            secondLockTask.IsCanceled.Should().BeTrue();
+        }
 
     }
 }
