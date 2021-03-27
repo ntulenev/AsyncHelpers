@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AsyncHelpers.Synchronization
@@ -30,7 +31,7 @@ namespace AsyncHelpers.Synchronization
         {
             lock (_queueGuard)
             {
-                if (_queue.Count > 0)
+                if (_queue.Any())
                 {
                     var tcs = _queue.Dequeue();
                     tcs.SetResult();
