@@ -80,7 +80,12 @@ namespace AsyncHelpers.Synchronization
                 throw new ArgumentNullException(nameof(reachableNodes));
             if (!reachableNodes.Any())
                 throw new ArgumentException("Nodes collection is empty.", nameof(reachableNodes));
-            _reachableNodes.AddRange(reachableNodes);
+
+            foreach (var node in reachableNodes)
+            {
+                if (!_reachableNodes.Add(node))
+                    throw new ArgumentException("Attempt to add node that already exists in edges.", nameof(reachableNodes));
+            }
         }
 
         /// <summary>
@@ -116,7 +121,7 @@ namespace AsyncHelpers.Synchronization
                 throw new InvalidOperationException("Graph contains loops");
         }
 
-        private readonly List<RWAsyncDAGVertex> _reachableNodes = new();
+        private readonly HashSet<RWAsyncDAGVertex> _reachableNodes = new();
         private readonly AsyncLock _writeLockGuard = new();
         private readonly AsyncCountdownEvent _readLockGuard = new(0);
     }
