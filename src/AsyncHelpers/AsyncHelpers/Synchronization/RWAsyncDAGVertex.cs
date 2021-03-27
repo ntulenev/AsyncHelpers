@@ -13,7 +13,6 @@ namespace AsyncHelpers.Synchronization
 {
     /// <summary>
     /// Directed acyclic graph node that supports Read/Write async locks on graph.
-    /// Class in progress...
     /// </summary>
     public class RWAsyncDAGVertex
     {
