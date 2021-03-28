@@ -12,7 +12,7 @@ namespace AsyncHelpers.Tests
 {
     public class RWAsyncDAGVertexTests
     {
-        [Fact(DisplayName = "The AsyncLockDAGVertex could be constructed.")]
+        [Fact(DisplayName = "The graph node could be constructed.")]
         [Trait("Category", "Unit")]
         public void CantBeConstructed()
         {
@@ -24,7 +24,7 @@ namespace AsyncHelpers.Tests
             exception.Should().BeNull();
         }
 
-        [Fact(DisplayName = "The RWAsyncDAGVertex could be validated without edges.")]
+        [Fact(DisplayName = "The signle node graph could be validated.")]
         [Trait("Category", "Unit")]
         public void SingleNodeCouldBeValidated()
         {
@@ -184,9 +184,9 @@ namespace AsyncHelpers.Tests
             exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
         }
 
-        [Fact(DisplayName = "Write lock on single node could be taken.")]
+        [Fact(DisplayName = "Lock on single node could be taken.")]
         [Trait("Category", "Unit")]
-        public async Task CanTakeWriteLockOnSingleNodeAsync()
+        public async Task CanTakeLockOnSingleNodeAsync()
         {
             // Arrange
             var vertex = new AsyncLockDAGVertex();
@@ -199,9 +199,9 @@ namespace AsyncHelpers.Tests
             exception.Should().BeNull();
         }
 
-        [Fact(DisplayName = "Second Write lock on single node could not be taken.")]
+        [Fact(DisplayName = "Second lock on single node could not be taken.")]
         [Trait("Category", "Unit")]
-        public async Task CantTakeSecondWriteLockOnSingleNodeAsync()
+        public async Task CantTakeSecondLockOnSingleNodeAsync()
         {
             // Arrange
             var vertex = new AsyncLockDAGVertex();
@@ -220,9 +220,9 @@ namespace AsyncHelpers.Tests
             secondLockTask.IsCompleted.Should().BeTrue();
         }
 
-        [Fact(DisplayName = "Write lock on single node of graph could be taken.")]
+        [Fact(DisplayName = "Lock on single node of graph could be taken.")]
         [Trait("Category", "Unit")]
-        public async Task CanTakeWriteLockOnSingleNodeOfGraphAsync()
+        public async Task CanTakeLockOnSingleNodeOfGraphAsync()
         {
             // Arrange
             var vertex1 = new AsyncLockDAGVertex();
@@ -241,9 +241,9 @@ namespace AsyncHelpers.Tests
             exception.Should().BeNull();
         }
 
-        [Fact(DisplayName = "Write lock on last node of graph could be taken.")]
+        [Fact(DisplayName = "Lock on last node of graph could be taken.")]
         [Trait("Category", "Unit")]
-        public async Task CanTakeWriteLockOnLastNodeOfGraphAsync()
+        public async Task CanTakeLockOnLastNodeOfGraphAsync()
         {
             // Arrange
             var vertex1 = new AsyncLockDAGVertex();
@@ -262,9 +262,9 @@ namespace AsyncHelpers.Tests
             exception.Should().BeNull();
         }
 
-        [Fact(DisplayName = "Write lock on last node of graph could not be taken if first has write lock.")]
+        [Fact(DisplayName = "Lock on last node of graph could not be taken if first has write lock.")]
         [Trait("Category", "Unit")]
-        public async Task CantTakeWriteLockOnLastNodeOfGraphAsync()
+        public async Task CantTakeLockOnLastNodeOfGraphAsync()
         {
             // Arrange
             var vertex1 = new AsyncLockDAGVertex();
@@ -290,9 +290,9 @@ namespace AsyncHelpers.Tests
             lastLockTask.IsCompleted.Should().BeTrue();
         }
 
-        [Fact(DisplayName = "Write lock on first node of graph could not be taken if last has write lock.")]
+        [Fact(DisplayName = "Lock on first node of graph could not be taken if last has write lock.")]
         [Trait("Category", "Unit")]
-        public async Task CantTakeWriteLockOnFirstNodeOfGraphAsync()
+        public async Task CantTakeLockOnFirstNodeOfGraphAsync()
         {
             // Arrange
             var vertex1 = new AsyncLockDAGVertex();
@@ -343,9 +343,62 @@ namespace AsyncHelpers.Tests
             secondLockTask.IsCanceled.Should().BeTrue();
         }
 
-        //3 items tests
-        //Lock on parent locks all childs
-        //Lock on one child locks parent but dont locks other child
+        [Fact(DisplayName = "Child nodes of one parent does not blocks each other.")]
+        [Trait("Category", "Unit")]
+        public async Task ChildsLocksDoesnotBlocksEachOther()
+        {
+            // Arrange
+            var vertex1 = new AsyncLockDAGVertex();
+            var vertex2 = new AsyncLockDAGVertex();
+            var vertex3 = new AsyncLockDAGVertex();
+            var vertex4 = new AsyncLockDAGVertex();
+            vertex1.AddEdgesTo(vertex2, vertex3);
+            vertex2.AddEdgesTo(vertex4);
+            vertex3.AddEdgesTo(vertex4);
 
+            _ = await vertex2.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
+
+            // Act
+            var lock3Task = vertex3.GetLockAsync(CancellationToken.None);
+
+            // Assert
+            lock3Task.IsCompleted.Should().BeTrue();
+        }
+
+        [Fact(DisplayName = "Child with few parents wait that blocks from both parents.")]
+        [Trait("Category", "Unit")]
+        public async Task ChildWaitAllParentsLocks()
+        {
+            // Arrange
+            var vertex1 = new AsyncLockDAGVertex();
+            var vertex2 = new AsyncLockDAGVertex();
+            var vertex3 = new AsyncLockDAGVertex();
+            var vertex4 = new AsyncLockDAGVertex();
+            vertex1.AddEdgesTo(vertex2, vertex3);
+            vertex2.AddEdgesTo(vertex4);
+            vertex3.AddEdgesTo(vertex4);
+
+            var lock2 = await vertex2.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
+            var lock3 = await vertex3.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
+
+            // Act
+            var lock4Task = vertex4.GetLockAsync(CancellationToken.None);
+
+            // Assert
+            lock4Task.IsCompleted.Should().BeFalse();
+
+            lock2.Dispose();
+
+            await Task.Delay(500); // Attempts to ensure that task is complete.
+
+            lock4Task.IsCompleted.Should().BeFalse();
+
+            lock3.Dispose();
+
+            await Task.Delay(500); // Attempts to ensure that task is complete.
+
+            lock4Task.IsCompleted.Should().BeTrue();
+
+        }
     }
 }
