@@ -12,16 +12,16 @@ using Nito.AsyncEx;
 namespace AsyncHelpers.Synchronization
 {
     /// <summary>
-    /// Directed acyclic graph node that supports Read/Write async locks on graph.
+    /// Directed acyclic graph that supports async locks.
     /// </summary>
-    public class RWAsyncDAGVertex
+    public class AsyncLockDAGVertex
     {
         /// <summary>
-        /// Gets white lock on current node.
+        /// Gets async lock on current node.
         /// </summary>
         /// <param name="ct">Token to cancel.</param>
         /// <returns>Lock object.</returns>
-        public async Task<IDisposable> GetWriteLockAsync(CancellationToken ct)
+        public async Task<IDisposable> GetLockAsync(CancellationToken ct)
         {
             var linkedReadLocks = await GetLinkedReadLocksAsync(ct).ConfigureAwait(false);
 
@@ -33,26 +33,12 @@ namespace AsyncHelpers.Synchronization
         }
 
         /// <summary>
-        /// Get read lock on current node.
-        /// </summary>
-        /// <param name="ct">Token to cancel.</param>
-        /// <returns>Lock object.</returns>
-        public async Task<IDisposable> GetReadLockAsync(CancellationToken ct)
-        {
-            var linkedReadLocks = await GetLinkedReadLocksAsync(ct).ConfigureAwait(false);
-
-            var readHandle = await GetReadLockInternalAsync(ct).ConfigureAwait(false);
-
-            return CreateLockObject(readHandle, linkedReadLocks);
-        }
-
-        /// <summary>
         /// Add edges to reachable nodes.
         /// </summary>
         /// <param name="reachableNodes">Reachable nodes.</param>
         /// <exception cref="ArgumentNullException">If <paramref name="reachableNodes"/> is null.</exception>
         /// <exception cref="ArgumentException">If <paramref name="reachableNodes"/> is empty.</exception>
-        public void AddEdgesTo(params RWAsyncDAGVertex[] reachableNodes)
+        public void AddEdgesTo(params AsyncLockDAGVertex[] reachableNodes)
         {
             if (reachableNodes == null)
             {
@@ -84,9 +70,9 @@ namespace AsyncHelpers.Synchronization
         /// <exception cref="InvalidOperationException"/>
         public void ValidateGraph()
         {
-            var previousNodes = new HashSet<RWAsyncDAGVertex>();
+            var previousNodes = new HashSet<AsyncLockDAGVertex>();
 
-            bool DeepFirstLoopSearch([NotNull] RWAsyncDAGVertex node)
+            bool DeepFirstLoopSearch([NotNull] AsyncLockDAGVertex node)
             {
                 previousNodes.Add(node);
 
@@ -127,7 +113,7 @@ namespace AsyncHelpers.Synchronization
         {
             List<IDisposable> navegatedNodes = new List<IDisposable>();
 
-            async Task GetAllPathsAsync(RWAsyncDAGVertex root)
+            async Task GetAllPathsAsync(AsyncLockDAGVertex root)
             {
                 foreach (var edge in root._reachableNodes)
                 {
@@ -150,7 +136,7 @@ namespace AsyncHelpers.Synchronization
             return new ActionDispose(_readLockGuard.Signal);
         }
 
-        private readonly HashSet<RWAsyncDAGVertex> _reachableNodes = new();
+        private readonly HashSet<AsyncLockDAGVertex> _reachableNodes = new();
         private readonly AsyncLock _writeLockGuard = new();
         private readonly AsyncCountdownEvent _readLockGuard = new(0);
     }

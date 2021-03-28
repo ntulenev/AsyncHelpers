@@ -14,12 +14,13 @@ namespace AsyncHelpers.Examples
         {
             Console.WriteLine("Hello World!");
 
-            await RechargeableCompletionSourceExampleAsync().ConfigureAwait(false);
+            //await RechargeableCompletionSourceExampleAsync().ConfigureAwait(false);
             //await ValueTaskCompletionSourceExampleAsync().ConfigureAwait(false);
             //await SinglePhaseAsyncBarrierExampleAsync().ConfigureAwait(false);
             //await ContinuationQueueExampleAsync().ConfigureAwait(false);
             //await WaitAllTasksButCheckAsyncExampleAsync().ConfigureAwait(false);
             //await TryExecuteWithTimeoutAsyncExampleAsync().ConfigureAwait(false);
+            await RWAsyncDAGVertexExampleAsync().ConfigureAwait(false);
         }
 
         static async Task RechargeableCompletionSourceExampleAsync()
@@ -168,6 +169,68 @@ namespace AsyncHelpers.Examples
             var timeout = 1000;
             var isExecutedInTimeout = await task.TryExecuteWithTimeoutAsync(timeout, CancellationToken.None).ConfigureAwait(false);
             Console.WriteLine(isExecutedInTimeout);
+        }
+
+        public class VertexWithValue : AsyncLockDAGVertex
+        {
+            public int Value { get; set; }
+            public int Id { get; }
+            public VertexWithValue(int id)
+            {
+                Id = id;
+            }
+            public override string ToString() => $"V{Id} => {Value}";
+        }
+
+        public static async Task RWAsyncDAGVertexExampleAsync()
+        {
+
+            var vertex1 = new VertexWithValue(1);
+            var vertex2 = new VertexWithValue(2);
+            var vertex3 = new VertexWithValue(3);
+            vertex1.AddEdgesTo(vertex2, vertex3);
+            vertex1.ValidateGraph();
+
+            var vertex1Task = Task.Run(async () =>
+            {
+                while (true)
+                {
+                    await Task.Delay(500); // Run interval.
+                    using var _ = await vertex1.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
+                    Console.WriteLine($"Start updating [{vertex1}]");
+                    vertex1.Value++;
+                    await Task.Delay(5000).ConfigureAwait(false);  // Some async work.
+                    Console.WriteLine($"End updating [{vertex1}]");
+                }
+            });
+
+            var vertex2Task = Task.Run(async () =>
+            {
+                while (true)
+                {
+                    await Task.Delay(400); // Run interval.
+                    using var _ = await vertex2.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
+                    Console.WriteLine($"    Start updating [{vertex2}]");
+                    vertex2.Value++;
+                    await Task.Delay(1000).ConfigureAwait(false);  // Some async work.
+                    Console.WriteLine($"    End updating [{vertex2}]");
+                }
+            });
+
+            var vertex3Task = Task.Run(async () =>
+            {
+                while (true)
+                {
+                    await Task.Delay(400); // Run interval.
+                    using var _ = await vertex3.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
+                    Console.WriteLine($"    Start updating [{vertex3}]");
+                    vertex3.Value++;
+                    await Task.Delay(1000).ConfigureAwait(false);  // Some async work.
+                    Console.WriteLine($"    End updating [{vertex3}]");
+                }
+            });
+
+            await Task.WhenAll(vertex1Task, vertex2Task, vertex3Task).ConfigureAwait(false);
         }
     }
 }
