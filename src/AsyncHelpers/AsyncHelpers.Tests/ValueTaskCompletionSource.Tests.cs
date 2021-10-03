@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Threading.Tasks;
 using AsyncHelpers.TaskProducers;
 
 using FluentAssertions;
@@ -203,17 +203,17 @@ namespace AsyncHelpers.Tests
 
         [Fact(DisplayName = "Unable to get result twice.")]
         [Trait("Category", "Unit")]
-        public void DoubleGettingResultThrowsException()
+        public async Task DoubleGettingResultThrowsException()
         {
             //Assert
             var vts = new ValueTaskCompletionSource<object>(false);
             var t = vts.Task;
             vts.SetResult(null!);
-            _ = t.GetAwaiter().GetResult();
+            _ = await t;
 
             // Act
-            var exception = Record.Exception(
-                () => _ = t.GetAwaiter().GetResult());
+            var exception = Record.ExceptionAsync(
+                async () => _ = await t);
 
             // Assert
             exception.Should().NotBeNull().And.BeOfType<InvalidOperationException>();
