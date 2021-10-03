@@ -50,9 +50,11 @@ namespace AsyncHelpers.Tests
         {
             // Arrange
             var rcs = new RechargeableCompletionSource<object>(runContinuationsAsynchronously);
+            var tFinishCheck = new TaskCompletionSource();
 
             // Act
             var t = Task.Run(() => rcs.SetResultAndWait(null!));
+            _ = t.ContinueWith(_ => tFinishCheck.SetResult(), TaskContinuationOptions.ExecuteSynchronously);
 
             await Task.Delay(1_000); // Attempts to ensure that task t never completes.
 
@@ -65,7 +67,7 @@ namespace AsyncHelpers.Tests
 
             result.Dispose();
 
-            await Task.Delay(1_000); // Attempts to ensure that t will change status after work will finished.
+            await tFinishCheck.Task;
 
             t.IsCompleted.Should().BeTrue();
         }
@@ -78,11 +80,12 @@ namespace AsyncHelpers.Tests
         {
             // Arrange
             var rcs = new RechargeableCompletionSource<object>(runContinuationsAsynchronously);
-
-            // Act
+            var tFinishCheck = new TaskCompletionSource();
             var result = rcs.GetValueAsync();
 
+            // Act
             var t = Task.Run(() => rcs.SetResultAndWait(null!));
+            _ = t.ContinueWith(_ => tFinishCheck.SetResult(), TaskContinuationOptions.ExecuteSynchronously);
 
             await Task.Delay(1_000); // Attempts to ensure that task t never completes iteself.
 
@@ -92,7 +95,7 @@ namespace AsyncHelpers.Tests
 
             result.Result.Dispose();
 
-            await Task.Delay(1_000); // Attempts to ensure that t will change status after work will finished.
+            await tFinishCheck.Task;
 
             t.IsCompleted.Should().BeTrue();
         }
