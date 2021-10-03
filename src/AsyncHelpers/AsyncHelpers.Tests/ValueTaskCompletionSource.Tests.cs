@@ -212,7 +212,7 @@ namespace AsyncHelpers.Tests
             _ = await t;
 
             // Act
-            var exception = Record.ExceptionAsync(
+            var exception = await Record.ExceptionAsync(
                 async () => _ = await t);
 
             // Assert
