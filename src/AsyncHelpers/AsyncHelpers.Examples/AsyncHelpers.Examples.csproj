@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<LangVersion>9.0</LangVersion>
+    <TargetFramework>net6.0</TargetFramework>
+	<LangVersion>10.0</LangVersion>
 
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -9,7 +10,6 @@
     <Platform>x64</Platform>
     <Platforms>x64</Platforms>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
