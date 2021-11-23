@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-using AsyncHelpers.TaskProducers;
+﻿using AsyncHelpers.TaskProducers;
 
 using FluentAssertions;
 

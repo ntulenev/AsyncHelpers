@@ -1,6 +1,4 @@
-﻿using System;
-
-using AsyncHelpers.Helpers;
+﻿using AsyncHelpers.Helpers;
 
 using FluentAssertions;
 

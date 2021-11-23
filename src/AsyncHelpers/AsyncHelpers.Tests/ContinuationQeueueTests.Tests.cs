@@ -1,6 +1,4 @@
-﻿using System;
-
-using AsyncHelpers.Synchronization;
+﻿using AsyncHelpers.Synchronization;
 
 using FluentAssertions;
 

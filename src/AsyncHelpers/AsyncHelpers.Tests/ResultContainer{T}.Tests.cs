@@ -1,5 +1,3 @@
-using System;
-
 using AsyncHelpers.TaskProducers;
 
 using FluentAssertions;
