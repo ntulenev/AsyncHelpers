@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace AsyncHelpers.TaskProducers
+﻿namespace AsyncHelpers.TaskProducers
 {
     /// <summary>
     /// <see cref="TaskCompletionSource{TResult}"/> that could be recharge.

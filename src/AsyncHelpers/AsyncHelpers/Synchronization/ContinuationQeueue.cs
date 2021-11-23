@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace AsyncHelpers.Synchronization
+﻿namespace AsyncHelpers.Synchronization
 {
     /// <summary>
     /// Queue that registers continuations and runs them one be one.

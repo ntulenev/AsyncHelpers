@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace AsyncHelpers.Synchronization
+﻿namespace AsyncHelpers.Synchronization
 {
     /// <summary>
     /// Single phase async analogue of <see cref="System.Threading.Barrier"/>.
