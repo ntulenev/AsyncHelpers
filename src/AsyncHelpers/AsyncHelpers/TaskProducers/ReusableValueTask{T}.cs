@@ -29,7 +29,10 @@ namespace AsyncHelpers.TaskProducers
                 {
                     var status = _mre.GetStatus(token);
                     if (status == ValueTaskSourceStatus.Canceled)
+                    {
                         throw new TaskCanceledException();
+                    }
+
                     return _mre.GetResult(token);
                 }
                 finally
@@ -60,7 +63,9 @@ namespace AsyncHelpers.TaskProducers
         public void OnCompleted(Action<object?> continuation, object? state, short token, ValueTaskSourceOnCompletedFlags flags)
         {
             if (continuation == null)
+            {
                 throw new ArgumentNullException(nameof(continuation));
+            }
 
             _mre.OnCompleted(continuation, state, token, flags);
         }
@@ -100,6 +105,7 @@ namespace AsyncHelpers.TaskProducers
 
                     return true;
                 }
+
                 return false;
             }
         }
@@ -116,7 +122,7 @@ namespace AsyncHelpers.TaskProducers
 
         private ManualResetValueTaskSourceCore<TResult> _mre;
 
-        private readonly object _tokenGuard = new object();
+        private readonly object _tokenGuard = new();
 
     }
 }
