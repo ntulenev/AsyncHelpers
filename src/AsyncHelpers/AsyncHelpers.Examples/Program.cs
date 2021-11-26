@@ -29,7 +29,7 @@ namespace AsyncHelpers.Examples
                 while (true)
                 {
                     using var data = await rtcs.GetValueAsync().ConfigureAwait(false);
-                    Console.WriteLine($"Get {data.Value} on Thread {Thread.CurrentThread.ManagedThreadId}");
+                    Console.WriteLine($"Get {data.Value} on Thread {Environment.CurrentManagedThreadId}");
                 }
             });
 
@@ -41,7 +41,7 @@ namespace AsyncHelpers.Examples
                 while (true)
                 {
                     Thread.Sleep(1_000);
-                    Console.WriteLine($"Add {i} on Thread {Thread.CurrentThread.ManagedThreadId}");
+                    Console.WriteLine($"Add {i} on Thread {Environment.CurrentManagedThreadId}");
                     rtcs.SetResultAndWait(i++);
                 }
             });
@@ -51,8 +51,8 @@ namespace AsyncHelpers.Examples
 
         static async Task ValueTaskCompletionSourceExampleAsync()
         {
-            ValueTaskCompletionSource<int> vtcs = new ValueTaskCompletionSource<int>(false);
-            AutoResetEvent are = new AutoResetEvent(false);
+            var vtcs = new ValueTaskCompletionSource<int>(false);
+            var are = new AutoResetEvent(false);
 
             var t1 = Task.Run(() =>
             {
@@ -81,7 +81,7 @@ namespace AsyncHelpers.Examples
 
         public static async Task SinglePhaseAsyncBarrierExampleAsync()
         {
-            SinglePhaseAsyncBarrier spb = new SinglePhaseAsyncBarrier(3);
+            var spb = new SinglePhaseAsyncBarrier(3);
 
             var t1 = Task.Run(async () =>
             {
@@ -111,7 +111,7 @@ namespace AsyncHelpers.Examples
         }
         public static async Task ContinuationQueueExampleAsync()
         {
-            ContinuationQueue cq = new ContinuationQueue();
+            var cq = new ContinuationQueue();
 
             var t1 = Task.Run(async () =>
             {
@@ -161,7 +161,7 @@ namespace AsyncHelpers.Examples
 
         public static async Task TryExecuteWithTimeoutAsyncExampleAsync()
         {
-            Task task = Task.Delay(5000);
+            var task = Task.Delay(5000);
             var timeout = 1000;
             var isExecutedInTimeout = await task.TryExecuteWithTimeoutAsync(timeout, CancellationToken.None).ConfigureAwait(false);
             Console.WriteLine(isExecutedInTimeout);
