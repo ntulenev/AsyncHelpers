@@ -13,7 +13,9 @@
         public SinglePhaseAsyncBarrier(int participantCount)
         {
             if (participantCount <= 0)
+            {
                 throw new ArgumentException("Value should be positive.", nameof(participantCount));
+            }
 
             _participantCount = participantCount;
         }
@@ -43,8 +45,8 @@
 
         private int _currentCount;
 
-        private TaskCompletionSource _tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        private TaskCompletionSource _tcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        private readonly object _barrierCheckGuard = new object();
+        private readonly object _barrierCheckGuard = new();
     }
 }
