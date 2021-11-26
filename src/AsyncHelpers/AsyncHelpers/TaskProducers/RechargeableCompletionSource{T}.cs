@@ -59,9 +59,13 @@
         private void CreateCompletionSource()
         {
             if (_runContinuationsAsynchronously)
+            {
                 _tcs = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
+            }
             else
+            {
                 _tcs = new TaskCompletionSource<T>();
+            }
         }
 
         private TaskCompletionSource<T> _tcs = default!;
@@ -70,11 +74,11 @@
 
         private readonly bool _runContinuationsAsynchronously;
 
-        private readonly AutoResetEvent _are = new AutoResetEvent(false);
+        private readonly AutoResetEvent _are = new(false);
 
-        private readonly object _setResultGuard = new object();
+        private readonly object _setResultGuard = new();
 
-        private readonly object _getValueAsyncGuard = new object();
+        private readonly object _getValueAsyncGuard = new();
 
 
     }
