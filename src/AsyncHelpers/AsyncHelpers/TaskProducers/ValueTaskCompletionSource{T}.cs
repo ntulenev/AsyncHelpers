@@ -27,7 +27,9 @@
         public void SetResult(TResult result)
         {
             if (!TrySetResult(result))
+            {
                 throw new InvalidOperationException();
+            }
         }
 
         /// <summary>
@@ -41,7 +43,9 @@
         public void SetCanceled()
         {
             if (!TrySetCanceled())
+            {
                 throw new InvalidOperationException();
+            }
         }
 
         /// <summary>
@@ -50,7 +54,10 @@
         public bool TrySetException(Exception ex)
         {
             if (ex == null)
+            {
                 throw new ArgumentNullException(nameof(ex));
+            }
+
             return _vts.TrySetException(ex, _vts.Version);
         }
 
@@ -60,9 +67,14 @@
         public void SetException(Exception ex)
         {
             if (ex == null)
+            {
                 throw new ArgumentNullException(nameof(ex));
+            }
+
             if (!TrySetException(ex))
+            {
                 throw new InvalidOperationException();
+            }
         }
 
         public ValueTask<TResult> Task => _vts.Task;
