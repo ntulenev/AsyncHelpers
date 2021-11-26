@@ -89,7 +89,9 @@ namespace AsyncHelpers.Synchronization
 
             var hasLoops = DeepFirstLoopSearch(this);
             if (hasLoops)
+            {
                 throw new InvalidOperationException("Graph contains loops");
+            }
         }
 
         private ActionDispose CreateLockObject(IDisposable mainLock, IEnumerable<IDisposable> dependendLocks)
@@ -106,7 +108,7 @@ namespace AsyncHelpers.Synchronization
 
         private async Task<IEnumerable<IDisposable>> GetLinkedReadLocksAsync(CancellationToken ct)
         {
-            List<IDisposable> navegatedNodes = new List<IDisposable>();
+            var navegatedNodes = new List<IDisposable>();
 
             async Task GetAllPathsAsync(AsyncLockDAGVertex root)
             {
