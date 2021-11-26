@@ -13,7 +13,9 @@
         public ActionDispose(Action disposeAction)
         {
             if (disposeAction is null)
+            {
                 throw new ArgumentNullException(nameof(disposeAction));
+            }
 
             _disposeAction = disposeAction;
         }
@@ -21,7 +23,9 @@
         private readonly Action _disposeAction;
 
         /// <inheritdoc/>
+#pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
         public virtual void Dispose()
+#pragma warning restore CA1816 // Dispose methods should call SuppressFinalize
         {
             if (!_isDisposed)
             {
