@@ -9,7 +9,6 @@
         /// Waits all tasks but invoke <paramref name="OnFaulted"/> if any task is failed.
         /// </summary>
         /// <exception cref="ArgumentNullException">Throws if any arg is null.</exception>
-        /// <exception cref="ArgumentNullException">Throws if any arg is null.</exception>
         public static async Task WaitAllTasksButCheckAsync(this IEnumerable<Task> tasks, Action onFaulted)
         {
             ArgumentNullException.ThrowIfNull(tasks);
@@ -27,6 +26,36 @@
             });
 
             await Task.WhenAll(tasks);
+        }
+
+        /// <summary>
+        /// Waits all tasks but stops if any is failed or cancelled.
+        /// </summary>
+        /// <typeparam name="TResult">Task return type.</typeparam>
+        /// <param name="tasks">Task to await.</param>
+        /// <exception cref="ArgumentNullException">Throws if tasks is null.</exception>
+        public static async Task<TResult[]> WhenAllOrError<TResult>(params Task<TResult>[] tasks)
+        {
+            ArgumentNullException.ThrowIfNull(tasks);
+
+            var killTask = new TaskCompletionSource<TResult[]>();
+
+            foreach (var task in tasks)
+            {
+                _ = task.ContinueWith(t =>
+                {
+                    if (t.IsCanceled)
+                    {
+                        _ = killTask.TrySetCanceled();
+                    }
+                    else if (t.IsFaulted)
+                    {
+                        _ = killTask.TrySetException(t.Exception!.InnerException!);
+                    }
+                });
+            }
+
+            return await await Task.WhenAny(killTask.Task, Task.WhenAll(tasks));
         }
 
         /// <summary>
