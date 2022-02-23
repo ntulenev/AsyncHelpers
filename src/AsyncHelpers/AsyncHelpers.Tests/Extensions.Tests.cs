@@ -323,5 +323,101 @@ namespace AsyncHelpers.Tests
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
         }
+
+        [Fact(DisplayName = "WhenAllOrError finished on completed tasks.")]
+        [Trait("Category", "Unit")]
+        public async Task WhenAllOrErrorFinishOnCompletedTasks()
+        {
+            // Arrange
+            var tcs1 = new TaskCompletionSource<int>();
+            var tcs2 = new TaskCompletionSource<int>();
+            tcs1.SetResult(1);
+            tcs2.SetResult(2);
+
+            // Act
+            var result = await Extensions.WhenAllOrError(tcs1.Task, tcs2.Task);
+
+            // Assert
+            result.Should().HaveCount(2);
+            result.Should().Contain(new[] { 1, 2 });
+        }
+
+        [Fact(DisplayName = "WhenAllOrError finished on normal tasks.")]
+        [Trait("Category", "Unit")]
+        public void WhenAllOrErrorFinishOnNOrmalTasks()
+        {
+            // Arrange
+            var tcs1 = new TaskCompletionSource<int>();
+            var tcs2 = new TaskCompletionSource<int>();
+
+
+            // Act
+            var resultTask = Extensions.WhenAllOrError(tcs1.Task, tcs2.Task);
+
+            // Assert
+            resultTask.IsCompleted.Should().BeFalse();
+
+            tcs1.SetResult(1);
+            tcs2.SetResult(2);
+
+            var result = resultTask.GetAwaiter().GetResult();
+
+            result.Should().HaveCount(2);
+            result.Should().Contain(new[] { 1, 2 });
+        }
+
+        [Fact(DisplayName = "WhenAllOrError stops on error.")]
+        [Trait("Category", "Unit")]
+        public async Task WhenAllOrErrorStopsOnError()
+        {
+            // Arrange
+            var tcs1 = new TaskCompletionSource<int>();
+            var tcs2 = new TaskCompletionSource<int>();
+
+
+            // Act
+            var resultTask = Extensions.WhenAllOrError(tcs1.Task, tcs2.Task);
+            tcs2.SetException(new InvalidOperationException());
+            var exception = await Record.ExceptionAsync(async () => await resultTask);
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<InvalidOperationException>();
+        }
+
+        [Fact(DisplayName = "WhenAllOrError stops on cancel.")]
+        [Trait("Category", "Unit")]
+        public async Task WhenAllOrErrorStopsOnCancel()
+        {
+            // Arrange
+            var tcs1 = new TaskCompletionSource<int>();
+            var tcs2 = new TaskCompletionSource<int>();
+
+            // Act
+            var resultTask = Extensions.WhenAllOrError(tcs1.Task, tcs2.Task);
+            tcs2.SetCanceled();
+            var exception = await Record.ExceptionAsync(async () => await resultTask);
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<TaskCanceledException>();
+        }
+
+        [Fact(DisplayName = "WhenAllOrError stops on several errors.")]
+        [Trait("Category", "Unit")]
+        public async Task WhenAllOrErrorStopsOnSeveralErrors()
+        {
+            // Arrange
+            var tcs1 = new TaskCompletionSource<int>();
+            var tcs2 = new TaskCompletionSource<int>();
+            var tcs3 = new TaskCompletionSource<int>();
+
+            // Act
+            var resultTask = Extensions.WhenAllOrError(tcs1.Task, tcs2.Task, tcs3.Task);
+            tcs1.SetException(new InvalidOperationException());
+            tcs2.SetCanceled();
+            var exception = await Record.ExceptionAsync(async () => await resultTask);
+
+            // Assert
+            (exception is InvalidOperationException || exception is TaskCanceledException).Should().BeTrue();
+        }
     }
 }
