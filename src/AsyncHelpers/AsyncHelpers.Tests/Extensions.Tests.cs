@@ -310,5 +310,18 @@ namespace AsyncHelpers.Tests
 
             task.GetAwaiter().GetResult().Should().Be(value);
         }
+
+        [Fact(DisplayName = "WhenAllOrError can't be run on null tasks.")]
+        [Trait("Category", "Unit")]
+        public async Task WhenAllOrErrorCantCheckNullTasks()
+        {
+
+            // Act
+            var exception = await Record.ExceptionAsync(
+                async () => _ = await Extensions.WhenAllOrError((Task<object>[])null!));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+        }
     }
 }
