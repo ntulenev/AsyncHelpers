@@ -176,7 +176,7 @@ namespace AsyncHelpers.Tests
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
         }
 
-        [Fact(DisplayName = "WithCancellation run on finished task.")]
+        [Fact(DisplayName = "WithCancellation runs on finished task.")]
         [Trait("Category", "Unit")]
         public async Task WithCancellationAndTask()
         {
@@ -194,7 +194,7 @@ namespace AsyncHelpers.Tests
             result.Should().Be(exceptedResult);
         }
 
-        [Fact(DisplayName = "WithCancellation run on finished task 2.")]
+        [Fact(DisplayName = "WithCancellation runs on finished task 2.")]
         [Trait("Category", "Unit")]
         public void WithCancellationAndTask2()
         {
@@ -212,7 +212,7 @@ namespace AsyncHelpers.Tests
             task.Should().Be(tcs.Task);
         }
 
-        [Fact(DisplayName = "WithCancellation run on error task.")]
+        [Fact(DisplayName = "WithCancellation runs on error task.")]
         [Trait("Category", "Unit")]
         public void WithCancellationAndTaskError()
         {
@@ -230,7 +230,7 @@ namespace AsyncHelpers.Tests
             task.Should().Be(tcs.Task);
         }
 
-        [Fact(DisplayName = "WithCancellation run on cancel task.")]
+        [Fact(DisplayName = "WithCancellation runs on cancel task.")]
         [Trait("Category", "Unit")]
         public void WithCancellationAndTaskCancel()
         {
@@ -246,6 +246,69 @@ namespace AsyncHelpers.Tests
 
             // Assert
             task.Should().Be(tcs.Task);
+        }
+
+        [Fact(DisplayName = "WithCancellation runs on canceled token.")]
+        [Trait("Category", "Unit")]
+        public void WithCancellationOnCancelledToken()
+        {
+            // Arrange
+
+            var tcs = new TaskCompletionSource<int>();
+
+            using var cts = new CancellationTokenSource();
+            cts.Cancel();
+
+            // Act
+            var task = Extensions.WithCancellation(tcs.Task, cts.Token);
+
+            // Assert
+            task.Should().NotBe(tcs.Task);
+            task.IsCanceled.Should().BeTrue();
+        }
+
+        [Fact(DisplayName = "WithCancellation runs after canceled token.")]
+        [Trait("Category", "Unit")]
+        public async Task WithCancellationAfterCancelledToken()
+        {
+            // Arrange
+
+            var tcs = new TaskCompletionSource<int>();
+
+            using var cts = new CancellationTokenSource();
+
+            // Act
+            var task = Extensions.WithCancellation(tcs.Task, cts.Token);
+
+            // Assert
+            task.IsCanceled.Should().BeFalse();
+
+            cts.Cancel();
+
+            var exception = await Record.ExceptionAsync(async () => await task);
+
+            exception.Should().NotBeNull().And.BeOfType<OperationCanceledException>();
+        }
+
+        [Fact(DisplayName = "WithCancellation completed.")]
+        [Trait("Category", "Unit")]
+        public void WithCancellationCompleted()
+        {
+            // Arrange
+            var value = 42;
+            var tcs = new TaskCompletionSource<int>();
+
+            using var cts = new CancellationTokenSource();
+
+            // Act
+            var task = Extensions.WithCancellation(tcs.Task, cts.Token);
+
+            // Assert
+            task.IsCanceled.Should().BeFalse();
+
+            tcs.SetResult(value);
+
+            task.GetAwaiter().GetResult().Should().Be(value);
         }
     }
 }
