@@ -17,7 +17,8 @@ namespace AsyncHelpers.Examples
             //await WaitAllTasksButCheckAsyncExampleAsync().ConfigureAwait(false);
             //await TryExecuteWithTimeoutAsyncExampleAsync().ConfigureAwait(false);
             //await RWAsyncDAGVertexExampleAsync().ConfigureAwait(false);4
-            await RunLongTaskWithCancellation().ConfigureAwait(false);
+            //await RunLongTaskWithCancellation().ConfigureAwait(false);
+            await WhenAllOrErrorTest().ConfigureAwait(false);
         }
 
         static async Task RechargeableCompletionSourceExampleAsync()
@@ -181,6 +182,24 @@ namespace AsyncHelpers.Examples
             catch (OperationCanceledException)
             {
                 Console.WriteLine("Task was canceled");
+            }
+        }
+
+        public static async Task WhenAllOrErrorTest()
+        {
+            var tcs1 = new TaskCompletionSource<int>();
+            var tcs2 = new TaskCompletionSource<int>();
+            var tcs3 = new TaskCompletionSource<int>();
+
+            _ = Task.Delay(1000).ContinueWith(_ => tcs3.SetException(new InvalidOperationException()));
+
+            try
+            {
+                await Extensions.WhenAllOrError(tcs1.Task, tcs2.Task, tcs3.Task).ConfigureAwait(false);
+            }
+            catch (InvalidOperationException)
+            {
+                Console.WriteLine("Error on await");
             }
         }
 
