@@ -313,3 +313,23 @@ catch (OperationCanceledException)
     Console.WriteLine("Task was canceled");
 }
 ```
+
+#### WhenAllOrError
+Waits all tasks but stops if any is failed or cancelled
+
+```C#
+var tcs1 = new TaskCompletionSource<int>();
+var tcs2 = new TaskCompletionSource<int>();
+var tcs3 = new TaskCompletionSource<int>();
+
+_ = Task.Delay(1000).ContinueWith(_ => tcs3.SetException(new InvalidOperationException()));
+
+try
+{
+    await Extensions.WhenAllOrError(tcs1.Task, tcs2.Task, tcs3.Task).ConfigureAwait(false);
+}
+catch (InvalidOperationException)
+{
+    Console.WriteLine("Error on await");
+}
+```
