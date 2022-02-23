@@ -295,3 +295,21 @@ Task task = ...;
 var timeout = 1000;
 var isExecutedInTimeout = await task.TryExecuteWithTimeoutAsync(timeout, CancellationToken.None);
 ```
+
+#### WithCancellation
+Attempts to wait some task with cancellation token
+
+```C#
+var tcs = new TaskCompletionSource<int>();
+var timeout = 1000;
+using var cts = new CancellationTokenSource(timeout);
+
+try
+{
+    await tcs.Task.WithCancellation(cts.Token).ConfigureAwait(false);
+}
+catch (OperationCanceledException)
+{
+    Console.WriteLine("Task was canceled");
+}
+```
