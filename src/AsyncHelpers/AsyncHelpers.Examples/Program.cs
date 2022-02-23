@@ -16,7 +16,8 @@ namespace AsyncHelpers.Examples
             //await ContinuationQueueExampleAsync().ConfigureAwait(false);
             //await WaitAllTasksButCheckAsyncExampleAsync().ConfigureAwait(false);
             //await TryExecuteWithTimeoutAsyncExampleAsync().ConfigureAwait(false);
-            await RWAsyncDAGVertexExampleAsync().ConfigureAwait(false);
+            //await RWAsyncDAGVertexExampleAsync().ConfigureAwait(false);4
+            await RunLongTaskWithCancellation().ConfigureAwait(false);
         }
 
         static async Task RechargeableCompletionSourceExampleAsync()
@@ -165,6 +166,22 @@ namespace AsyncHelpers.Examples
             var timeout = 1000;
             var isExecutedInTimeout = await task.TryExecuteWithTimeoutAsync(timeout, CancellationToken.None).ConfigureAwait(false);
             Console.WriteLine(isExecutedInTimeout);
+        }
+
+        public static async Task RunLongTaskWithCancellation()
+        {
+            var tcs = new TaskCompletionSource<int>();
+            var timeout = 1000;
+            using var cts = new CancellationTokenSource(timeout);
+
+            try
+            {
+                await tcs.Task.WithCancellation(cts.Token).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine("Task was canceled");
+            }
         }
 
         public class VertexWithValue : AsyncLockDAGVertex
