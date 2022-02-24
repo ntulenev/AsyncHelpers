@@ -12,10 +12,7 @@
         /// <exception cref="ArgumentNullException">Throws if action is null.</exception>
         public ActionDispose(Action disposeAction)
         {
-            if (disposeAction is null)
-            {
-                throw new ArgumentNullException(nameof(disposeAction));
-            }
+            ArgumentNullException.ThrowIfNull(disposeAction);
 
             _disposeAction = disposeAction;
         }
