@@ -53,10 +53,7 @@
         /// </summary>
         public bool TrySetException(Exception ex)
         {
-            if (ex == null)
-            {
-                throw new ArgumentNullException(nameof(ex));
-            }
+            ArgumentNullException.ThrowIfNull(ex);
 
             return _vts.TrySetException(ex, _vts.Version);
         }
@@ -66,10 +63,7 @@
         /// </summary>
         public void SetException(Exception ex)
         {
-            if (ex == null)
-            {
-                throw new ArgumentNullException(nameof(ex));
-            }
+            ArgumentNullException.ThrowIfNull(ex);
 
             if (!TrySetException(ex))
             {
