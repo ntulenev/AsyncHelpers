@@ -62,10 +62,7 @@ namespace AsyncHelpers.TaskProducers
         /// </summary>
         public void OnCompleted(Action<object?> continuation, object? state, short token, ValueTaskSourceOnCompletedFlags flags)
         {
-            if (continuation == null)
-            {
-                throw new ArgumentNullException(nameof(continuation));
-            }
+            ArgumentNullException.ThrowIfNull(continuation);
 
             _mre.OnCompleted(continuation, state, token, flags);
         }
