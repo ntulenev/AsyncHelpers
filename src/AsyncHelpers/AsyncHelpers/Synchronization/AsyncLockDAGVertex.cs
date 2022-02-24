@@ -35,10 +35,7 @@ namespace AsyncHelpers.Synchronization
         /// <exception cref="ArgumentException">If <paramref name="reachableNodes"/> is empty.</exception>
         public void AddEdgesTo(params AsyncLockDAGVertex[] reachableNodes)
         {
-            if (reachableNodes == null)
-            {
-                throw new ArgumentNullException(nameof(reachableNodes));
-            }
+            ArgumentNullException.ThrowIfNull(reachableNodes);
 
             if (!reachableNodes.Any())
             {
