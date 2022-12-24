@@ -1,45 +1,44 @@
-﻿namespace AsyncHelpers.Synchronization
+﻿namespace AsyncHelpers.Synchronization;
+
+/// <summary>
+/// Queue that registers continuations and runs them one be one.
+/// </summary>
+public class ContinuationQueue
 {
     /// <summary>
-    /// Queue that registers continuations and runs them one be one.
+    /// Register task for continuation.
     /// </summary>
-    public class ContinuationQueue
+    public Task WaitAsync()
     {
-        /// <summary>
-        /// Register task for continuation.
-        /// </summary>
-        public Task WaitAsync()
+        lock (_queueGuard)
         {
-            lock (_queueGuard)
-            {
-                var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-                _queue.Enqueue(tcs);
-                return tcs.Task;
-            }
+            var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            _queue.Enqueue(tcs);
+            return tcs.Task;
         }
-
-        /// <summary>
-        /// Set task as finished to run continuation.
-        /// </summary>
-        /// <exception cref=" InvalidOperationException">Throws if no tasks in queue.</exception>
-        public void FinishTask()
-        {
-            lock (_queueGuard)
-            {
-                if (_queue.Any())
-                {
-                    var tcs = _queue.Dequeue();
-                    tcs.SetResult();
-                }
-                else
-                {
-                    throw new InvalidOperationException("No tasks in queue");
-                }
-            }
-        }
-
-        private readonly object _queueGuard = new();
-
-        private readonly Queue<TaskCompletionSource> _queue = new();
     }
+
+    /// <summary>
+    /// Set task as finished to run continuation.
+    /// </summary>
+    /// <exception cref=" InvalidOperationException">Throws if no tasks in queue.</exception>
+    public void FinishTask()
+    {
+        lock (_queueGuard)
+        {
+            if (_queue.Any())
+            {
+                var tcs = _queue.Dequeue();
+                tcs.SetResult();
+            }
+            else
+            {
+                throw new InvalidOperationException("No tasks in queue");
+            }
+        }
+    }
+
+    private readonly object _queueGuard = new();
+
+    private readonly Queue<TaskCompletionSource> _queue = new();
 }
