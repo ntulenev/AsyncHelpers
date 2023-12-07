@@ -42,10 +42,7 @@ public class SinglePhaseAsyncBarrier
     }
 
     private readonly int _participantCount;
-
     private int _currentCount;
-
     private TaskCompletionSource _tcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
-
     private readonly object _barrierCheckGuard = new();
 }
