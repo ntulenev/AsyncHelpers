@@ -189,7 +189,7 @@ public class RWAsyncDAGVertexTests
 
         // Act
         var exception = await Record.ExceptionAsync(
-            async () => await vertex.GetLockAsync(CancellationToken.None).ConfigureAwait(false)).ConfigureAwait(false);
+            async () => await vertex.GetLockAsync(CancellationToken.None));
 
         // Assert
         exception.Should().BeNull();
@@ -201,7 +201,7 @@ public class RWAsyncDAGVertexTests
     {
         // Arrange
         var vertex = new AsyncLockDAGVertex();
-        var firstLock = await vertex.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
+        var firstLock = await vertex.GetLockAsync(CancellationToken.None);
 
         // Act
         var secondLockTask = vertex.GetLockAsync(CancellationToken.None);
@@ -211,7 +211,7 @@ public class RWAsyncDAGVertexTests
 
         firstLock.Dispose();
 
-        await Task.Delay(500).ConfigureAwait(false); // Attempts to ensure that task is complete.
+        await Task.Delay(500); // Attempts to ensure that task is complete.
 
         secondLockTask.IsCompleted.Should().BeTrue();
     }
@@ -231,7 +231,7 @@ public class RWAsyncDAGVertexTests
 
         // Act
         var exception = await Record.ExceptionAsync(
-            async () => await vertex1.GetLockAsync(CancellationToken.None).ConfigureAwait(false)).ConfigureAwait(false);
+            async () => await vertex1.GetLockAsync(CancellationToken.None));
 
         // Assert
         exception.Should().BeNull();
@@ -252,7 +252,7 @@ public class RWAsyncDAGVertexTests
 
         // Act
         var exception = await Record.ExceptionAsync(
-            async () => await vertex4.GetLockAsync(CancellationToken.None).ConfigureAwait(false)).ConfigureAwait(false);
+            async () => await vertex4.GetLockAsync(CancellationToken.None));
 
         // Assert
         exception.Should().BeNull();
@@ -271,7 +271,7 @@ public class RWAsyncDAGVertexTests
         vertex2.AddEdgesTo(vertex4);
         vertex3.AddEdgesTo(vertex4);
 
-        var firstLock = await vertex1.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
+        var firstLock = await vertex1.GetLockAsync(CancellationToken.None);
 
         // Act
         var lastLockTask = vertex4.GetLockAsync(CancellationToken.None);
@@ -281,7 +281,7 @@ public class RWAsyncDAGVertexTests
 
         firstLock.Dispose();
 
-        await Task.Delay(500).ConfigureAwait(false); // Attempts to ensure that task is complete.
+        await Task.Delay(500); // Attempts to ensure that task is complete.
 
         lastLockTask.IsCompleted.Should().BeTrue();
     }
@@ -299,7 +299,7 @@ public class RWAsyncDAGVertexTests
         vertex2.AddEdgesTo(vertex4);
         vertex3.AddEdgesTo(vertex4);
 
-        var lastLock = await vertex4.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
+        var lastLock = await vertex4.GetLockAsync(CancellationToken.None);
 
         // Act
         var firstLockTask = vertex1.GetLockAsync(CancellationToken.None);
@@ -309,7 +309,7 @@ public class RWAsyncDAGVertexTests
 
         lastLock.Dispose();
 
-        await Task.Delay(500).ConfigureAwait(false); // Attempts to ensure that task is complete.
+        await Task.Delay(500); // Attempts to ensure that task is complete.
 
         firstLockTask.IsCompleted.Should().BeTrue();
     }
@@ -324,7 +324,7 @@ public class RWAsyncDAGVertexTests
         // Arrange
         var vertex = new AsyncLockDAGVertex();
 
-        _ = await vertex.GetLockAsync(cts.Token).ConfigureAwait(false);
+        _ = await vertex.GetLockAsync(cts.Token);
 
         // Act
         var secondLockTask = vertex.GetLockAsync(cts.Token);
@@ -334,7 +334,7 @@ public class RWAsyncDAGVertexTests
 
         cts.Cancel();
 
-        await Task.Delay(500).ConfigureAwait(false); // Attempts to ensure that task is complete.
+        await Task.Delay(500); // Attempts to ensure that task is complete.
 
         secondLockTask.IsCanceled.Should().BeTrue();
     }
@@ -352,7 +352,7 @@ public class RWAsyncDAGVertexTests
         vertex2.AddEdgesTo(vertex4);
         vertex3.AddEdgesTo(vertex4);
 
-        _ = await vertex2.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
+        _ = await vertex2.GetLockAsync(CancellationToken.None);
 
         // Act
         var lock3Task = vertex3.GetLockAsync(CancellationToken.None);
@@ -374,8 +374,8 @@ public class RWAsyncDAGVertexTests
         vertex2.AddEdgesTo(vertex4);
         vertex3.AddEdgesTo(vertex4);
 
-        var lock2 = await vertex2.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
-        var lock3 = await vertex3.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
+        var lock2 = await vertex2.GetLockAsync(CancellationToken.None);
+        var lock3 = await vertex3.GetLockAsync(CancellationToken.None);
 
         // Act
         var lock4Task = vertex4.GetLockAsync(CancellationToken.None);

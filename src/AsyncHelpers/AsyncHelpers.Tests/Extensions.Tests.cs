@@ -308,7 +308,9 @@ public class ExtensionsTests
 
         tcs.SetResult(value);
 
+#pragma warning disable xUnit1031 // Do not use blocking task operations in test method
         task.GetAwaiter().GetResult().Should().Be(value);
+#pragma warning restore xUnit1031 // Do not use blocking task operations in test method
     }
 
     [Fact(DisplayName = "WhenAllOrError can't be run on null tasks.")]
@@ -360,7 +362,9 @@ public class ExtensionsTests
         tcs1.SetResult(1);
         tcs2.SetResult(2);
 
+#pragma warning disable xUnit1031 // Do not use blocking task operations in test method
         var result = resultTask.GetAwaiter().GetResult();
+#pragma warning restore xUnit1031 // Do not use blocking task operations in test method
 
         result.Should().HaveCount(2);
         result.Should().Contain(new[] { 1, 2 });

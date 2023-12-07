@@ -91,7 +91,9 @@ public class RechargeableCompletionSourceTests
         t.IsCompleted.Should().BeFalse();
         result.IsCompleted.Should().BeTrue();
 
+#pragma warning disable xUnit1031 // Do not use blocking task operations in test method
         result.Result.Dispose();
+#pragma warning restore xUnit1031 // Do not use blocking task operations in test method
 
         await tFinishCheck.Task;
 
