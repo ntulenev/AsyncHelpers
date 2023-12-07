@@ -48,7 +48,6 @@ internal class ReusableValueTask<TResult> : IValueTaskSource<TResult>, IValueTas
     /// <param name="token">The result of the <see cref="ReusableValueTask{TResult}"/>.</param>
     void IValueTaskSource.GetResult(short token) => GetResult(token);
 
-
     /// <summary>
     /// Gets the status of the operation.
     /// </summary>
@@ -118,7 +117,5 @@ internal class ReusableValueTask<TResult> : IValueTaskSource<TResult>, IValueTas
     public short Version => _mre.Version;
 
     private ManualResetValueTaskSourceCore<TResult> _mre;
-
     private readonly object _tokenGuard = new();
-
 }

@@ -39,6 +39,5 @@ public class ContinuationQueue
     }
 
     private readonly object _queueGuard = new();
-
     private readonly Queue<TaskCompletionSource> _queue = new();
 }

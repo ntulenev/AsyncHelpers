@@ -69,16 +69,9 @@ public class RechargeableCompletionSource<T>
     }
 
     private TaskCompletionSource<T> _tcs = default!;
-
     private volatile bool _isValueInWork;
-
     private readonly bool _runContinuationsAsynchronously;
-
     private readonly AutoResetEvent _are = new(false);
-
     private readonly object _setResultGuard = new();
-
     private readonly object _getValueAsyncGuard = new();
-
-
 }
