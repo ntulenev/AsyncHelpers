@@ -91,7 +91,7 @@ public class AsyncLockDAGVertex
         }
     }
 
-    private ActionDispose CreateLockObject(IDisposable mainLock, IEnumerable<IDisposable> dependendLocks)
+    private static ActionDispose CreateLockObject(IDisposable mainLock, IEnumerable<IDisposable> dependendLocks)
     {
         return new ActionDispose(() =>
         {
@@ -130,7 +130,7 @@ public class AsyncLockDAGVertex
         return new ActionDispose(_readLockGuard.Signal);
     }
 
-    private readonly HashSet<AsyncLockDAGVertex> _reachableNodes = new();
+    private readonly HashSet<AsyncLockDAGVertex> _reachableNodes = [];
     private readonly AsyncLock _writeLockGuard = new();
     private readonly AsyncCountdownEvent _readLockGuard = new(0);
 }
