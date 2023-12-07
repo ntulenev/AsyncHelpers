@@ -4,17 +4,12 @@
 /// <see cref="ValueTask{TResult}"/> implemetation of <see cref="TaskCompletionSource{TResult}"/>.
 /// </summary>
 /// <typeparam name="TResult">Type of Task result.</typeparam>
-public class ValueTaskCompletionSource<TResult>
+/// <remarks>
+/// Creates <see cref="ValueTaskCompletionSource{TResult}"/>.
+/// </remarks>
+/// <param name="runContinuationsAsynchronously">true is we need async continuation.</param>
+public class ValueTaskCompletionSource<TResult>(bool runContinuationsAsynchronously)
 {
-    /// <summary>
-    /// Creates <see cref="ValueTaskCompletionSource{TResult}"/>.
-    /// </summary>
-    /// <param name="runContinuationsAsynchronously">true is we need async continuation.</param>
-    public ValueTaskCompletionSource(bool runContinuationsAsynchronously)
-    {
-        _vts = new ReusableValueTask<TResult>(runContinuationsAsynchronously);
-    }
-
     /// <summary>
     /// Attempt to completes with a successful result.
     /// </summary>
@@ -70,7 +65,10 @@ public class ValueTaskCompletionSource<TResult>
         }
     }
 
+    /// <summary>
+    /// ValueTask that returns for awating.
+    /// </summary>
     public ValueTask<TResult> Task => _vts.Task;
 
-    private readonly ReusableValueTask<TResult> _vts;
+    private readonly ReusableValueTask<TResult> _vts = new(runContinuationsAsynchronously);
 }
