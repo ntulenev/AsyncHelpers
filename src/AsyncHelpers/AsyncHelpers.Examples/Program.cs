@@ -203,14 +203,11 @@ class Program
         }
     }
 
-    public class VertexWithValue : AsyncLockDAGVertex
+    public class VertexWithValue(int id) : AsyncLockDAGVertex
     {
         public int Value { get; set; }
-        public int Id { get; }
-        public VertexWithValue(int id)
-        {
-            Id = id;
-        }
+        public int Id { get; } = id;
+
         public override string ToString() => $"V{Id} => {Value}";
     }
 
