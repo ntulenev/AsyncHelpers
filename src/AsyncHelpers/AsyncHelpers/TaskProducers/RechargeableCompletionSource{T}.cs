@@ -4,7 +4,7 @@
 /// <see cref="TaskCompletionSource{TResult}"/> that could be recharge.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class RechargeableCompletionSource<T>
+public sealed class RechargeableCompletionSource<T>
 {
 
     /// <summary>

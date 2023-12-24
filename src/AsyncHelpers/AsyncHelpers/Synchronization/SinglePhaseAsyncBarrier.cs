@@ -3,7 +3,7 @@
 /// <summary>
 /// Single phase async analogue of <see cref="System.Threading.Barrier"/>.
 /// </summary>
-public class SinglePhaseAsyncBarrier
+public sealed class SinglePhaseAsyncBarrier
 {
     /// <summary>
     /// Creates barrier for <paramref name="participantCount"/> participants.

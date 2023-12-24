@@ -8,7 +8,7 @@
 /// Creates <see cref="ValueTaskCompletionSource{TResult}"/>.
 /// </remarks>
 /// <param name="runContinuationsAsynchronously">true is we need async continuation.</param>
-public class ValueTaskCompletionSource<TResult>(bool runContinuationsAsynchronously)
+public sealed class ValueTaskCompletionSource<TResult>(bool runContinuationsAsynchronously)
 {
     /// <summary>
     /// Attempt to completes with a successful result.

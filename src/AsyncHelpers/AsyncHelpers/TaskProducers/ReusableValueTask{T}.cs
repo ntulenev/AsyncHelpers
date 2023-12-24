@@ -6,7 +6,7 @@ namespace AsyncHelpers.TaskProducers;
 /// Special <see cref="IValueTaskSource"/> implementation for <see cref="ValueTaskCompletionSource{T}"/>.
 /// </summary>
 /// <typeparam name="TResult">Type of Task result.</typeparam>
-internal class ReusableValueTask<TResult> : IValueTaskSource<TResult>, IValueTaskSource
+internal sealed class ReusableValueTask<TResult> : IValueTaskSource<TResult>, IValueTaskSource
 {
     /// <summary>
     /// Creates instance of the <see cref="ReusableValueTask{TResult}"/>.

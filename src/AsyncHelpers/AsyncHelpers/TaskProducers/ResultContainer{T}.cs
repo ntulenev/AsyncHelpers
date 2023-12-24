@@ -13,7 +13,7 @@ namespace AsyncHelpers.TaskProducers;
 /// <param name="resetAction">logic that should be run on dispose stage.</param>
 /// <param name="value">result.</param>
 /// <exception cref="ArgumentNullException">Thrown when <paramref name="resetAction"/> is null.</exception>
-public class ResultContainer<T>(Action resetAction, T value) : ActionDispose(resetAction)
+public sealed class ResultContainer<T>(Action resetAction, T value) : ActionDispose(resetAction)
 {
     /// <summary>
     /// Result value.

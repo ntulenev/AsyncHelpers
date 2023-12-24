@@ -3,7 +3,7 @@
 /// <summary>
 /// Queue that registers continuations and runs them one be one.
 /// </summary>
-public class ContinuationQueue
+public sealed class ContinuationQueue
 {
     /// <summary>
     /// Register task for continuation.
