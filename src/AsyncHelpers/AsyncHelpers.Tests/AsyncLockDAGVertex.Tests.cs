@@ -20,7 +20,7 @@ public class RWAsyncDAGVertexTests
         exception.Should().BeNull();
     }
 
-    [Fact(DisplayName = "The signle node graph could be validated.")]
+    [Fact(DisplayName = "The single node graph could be validated.")]
     [Trait("Category", "Unit")]
     public void SingleNodeCouldBeValidated()
     {
@@ -341,7 +341,7 @@ public class RWAsyncDAGVertexTests
 
     [Fact(DisplayName = "Child nodes of one parent does not blocks each other.")]
     [Trait("Category", "Unit")]
-    public async Task ChildsLocksDoesnotBlocksEachOther()
+    public async Task ChildsLocksDoesNotBlocksEachOther()
     {
         // Arrange
         var vertex1 = new AsyncLockDAGVertex();

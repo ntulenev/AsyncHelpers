@@ -13,11 +13,8 @@ public class ActionDispose : IDisposable
     public ActionDispose(Action disposeAction)
     {
         ArgumentNullException.ThrowIfNull(disposeAction);
-
         _disposeAction = disposeAction;
     }
-
-    private readonly Action _disposeAction;
 
     /// <inheritdoc/>
 #pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
@@ -46,4 +43,5 @@ public class ActionDispose : IDisposable
     }
 
     protected bool _isDisposed;
+    private readonly Action _disposeAction;
 }

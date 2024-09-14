@@ -10,7 +10,8 @@ public sealed class RechargeableCompletionSource<T>
     /// <summary>
     /// Creates instance of <see cref="RechargeableCompletionSource{T}"/>.
     /// </summary>
-    /// <param name="runContinuationsAsynchronously">true is we need <see cref="TaskCompletionSource{TResult}"/> async continuation.</param>
+    /// <param name="runContinuationsAsynchronously">true is we need 
+    /// <see cref="TaskCompletionSource{TResult}"/> async continuation.</param>
     public RechargeableCompletionSource(bool runContinuationsAsynchronously)
     {
         _runContinuationsAsynchronously = runContinuationsAsynchronously;

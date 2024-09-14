@@ -91,12 +91,12 @@ public class AsyncLockDAGVertex
         }
     }
 
-    private static ActionDispose CreateLockObject(IDisposable mainLock, IEnumerable<IDisposable> dependendLocks)
+    private static ActionDispose CreateLockObject(IDisposable mainLock, IEnumerable<IDisposable> dependentLocks)
     {
         return new ActionDispose(() =>
         {
             mainLock.Dispose();
-            foreach (var dependentLock in dependendLocks)
+            foreach (var dependentLock in dependentLocks)
             {
                 dependentLock.Dispose();
             }
@@ -105,20 +105,20 @@ public class AsyncLockDAGVertex
 
     private async Task<IEnumerable<IDisposable>> GetLinkedReadLocksAsync(CancellationToken ct)
     {
-        var navegatedNodes = new List<IDisposable>();
+        var navigatedNodes = new List<IDisposable>();
 
         async Task GetAllPathsAsync(AsyncLockDAGVertex root)
         {
             foreach (var edge in root._reachableNodes)
             {
-                navegatedNodes.Add(await edge.GetReadLockInternalAsync(ct).ConfigureAwait(false));
+                navigatedNodes.Add(await edge.GetReadLockInternalAsync(ct).ConfigureAwait(false));
                 await GetAllPathsAsync(edge).ConfigureAwait(false);
             }
         }
 
         await GetAllPathsAsync(this).ConfigureAwait(false);
 
-        return navegatedNodes;
+        return navigatedNodes;
     }
 
     private async Task<IDisposable> GetReadLockInternalAsync(CancellationToken ct)

@@ -9,7 +9,7 @@ public sealed class SinglePhaseAsyncBarrier
     /// Creates barrier for <paramref name="participantCount"/> participants.
     /// </summary>
     /// <param name="participantCount">Count of the participants.</param>
-    /// <exception cref="ArgumentException">Throws exception if participantCount is incorrest.</exception>
+    /// <exception cref="ArgumentException">Throws exception if participantCount is incorrect.</exception>
     public SinglePhaseAsyncBarrier(int participantCount)
     {
         if (participantCount <= 0)
@@ -21,7 +21,7 @@ public sealed class SinglePhaseAsyncBarrier
     }
 
     /// <summary>
-    /// Signals about new participant and reutrns the task that will be finished when all participants will be added.
+    /// Signals about new participant and returns the task that will be finished when all participants will be added.
     /// </summary>
     public Task SignalAndWaitAsync()
     {

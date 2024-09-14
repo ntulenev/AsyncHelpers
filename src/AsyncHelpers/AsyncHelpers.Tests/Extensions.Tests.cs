@@ -8,7 +8,7 @@ namespace AsyncHelpers.Tests;
 
 public class ExtensionsTests
 {
-    [Fact(DisplayName = "WaitAllTasksButCheck shoud thow exception when tasks are null.")]
+    [Fact(DisplayName = "WaitAllTasksButCheck should throw exception when tasks are null.")]
     [Trait("Category", "Unit")]
     public async Task WaitAllTasksButCheckExceptionOnNullTasks()
     {
@@ -23,12 +23,12 @@ public class ExtensionsTests
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
     }
 
-    [Fact(DisplayName = "WaitAllTasksButCheck shoud thow exception when action is null.")]
+    [Fact(DisplayName = "WaitAllTasksButCheck should throw exception when action is null.")]
     [Trait("Category", "Unit")]
     public async Task WaitAllTasksButCheckExceptionOnNullAction()
     {
         //Arrange
-        IEnumerable<Task> tasks = new[] { Task.CompletedTask };
+        IEnumerable<Task> tasks = [Task.CompletedTask];
         Action a = null!;
 
         // Act
@@ -39,7 +39,7 @@ public class ExtensionsTests
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
     }
 
-    [Fact(DisplayName = "WaitAllTasksButCheck shoud complete both tasks correct if no errors.")]
+    [Fact(DisplayName = "WaitAllTasksButCheck should complete both tasks correct if no errors.")]
     [Trait("Category", "Unit")]
     public async Task WaitAllWithCorrectTasks()
     {
@@ -53,7 +53,7 @@ public class ExtensionsTests
         bool isFailed = false;
 
         // Act
-        var task = Extensions.WaitAllTasksButCheckAsync(new[] { t1, t2 }, () => isFailed = true);
+        var task = Extensions.WaitAllTasksButCheckAsync([t1, t2], () => isFailed = true);
         var timeoutTask = Task.Delay(500); // Attempts to ensure that task will finish.
 
         tcs1.SetResult();
@@ -66,7 +66,7 @@ public class ExtensionsTests
         result.Should().Be(task);
     }
 
-    [Fact(DisplayName = "WaitAllTasksButCheck shoud run action of any task failed.")]
+    [Fact(DisplayName = "WaitAllTasksButCheck should run action of any task failed.")]
     [Trait("Category", "Unit")]
     public async Task WaitAllWithFailedTasks()
     {
@@ -80,7 +80,7 @@ public class ExtensionsTests
         bool isFailed = false;
 
         // Act
-        var task = Extensions.WaitAllTasksButCheckAsync(new[] { t1, t2 }, () =>
+        var task = Extensions.WaitAllTasksButCheckAsync([t1, t2], () =>
         {
             isFailed = true;
         });
@@ -94,7 +94,7 @@ public class ExtensionsTests
         task.IsCompleted.Should().BeFalse();
     }
 
-    [Fact(DisplayName = "TryExecuteWithTimeoutAsync shoud thow exception when task is null.")]
+    [Fact(DisplayName = "TryExecuteWithTimeoutAsync should throw exception when task is null.")]
     [Trait("Category", "Unit")]
     public async Task TryExecuteWithTimeoutAsyncExceptionOnNullTasks()
     {
@@ -110,7 +110,7 @@ public class ExtensionsTests
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
     }
 
-    [Theory(DisplayName = "TryExecuteWithTimeoutAsync shoud thow exception when timeout is wrong.")]
+    [Theory(DisplayName = "TryExecuteWithTimeoutAsync should throw exception when timeout is wrong.")]
     [Trait("Category", "Unit")]
     [InlineData(0)]
     [InlineData(-1)]
@@ -341,12 +341,12 @@ public class ExtensionsTests
 
         // Assert
         result.Should().HaveCount(2);
-        result.Should().Contain(new[] { 1, 2 });
+        result.Should().Contain([1, 2]);
     }
 
     [Fact(DisplayName = "WhenAllOrError finished on normal tasks.")]
     [Trait("Category", "Unit")]
-    public void WhenAllOrErrorFinishOnNOrmalTasks()
+    public void WhenAllOrErrorFinishOnNormalTasks()
     {
         // Arrange
         var tcs1 = new TaskCompletionSource<int>();
@@ -367,7 +367,7 @@ public class ExtensionsTests
 #pragma warning restore xUnit1031 // Do not use blocking task operations in test method
 
         result.Should().HaveCount(2);
-        result.Should().Contain(new[] { 1, 2 });
+        result.Should().Contain([1, 2]);
     }
 
     [Fact(DisplayName = "WhenAllOrError stops on error.")]

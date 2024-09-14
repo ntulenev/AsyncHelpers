@@ -6,14 +6,14 @@ using Xunit;
 
 namespace AsyncHelpers.Tests;
 
-public class ContinuationQeueueTests
+public class ContinuationQueueTests
 {
     [Fact(DisplayName = "FinishTask on empty queue throws exception.")]
     [Trait("Category", "Unit")]
     public void CanNotRunFinishTaskOnEmptyQueue()
     {
         //Arrange
-        ContinuationQueue continuationQueue = new ContinuationQueue();
+        ContinuationQueue continuationQueue = new();
 
         // Act
         var exception = Record.Exception(
@@ -28,7 +28,7 @@ public class ContinuationQeueueTests
     public void TaskFromQueueIsNotComplete()
     {
         //Arrange
-        ContinuationQueue continuationQueue = new ContinuationQueue();
+        ContinuationQueue continuationQueue = new();
 
         // Act
         var t1 = continuationQueue.WaitAsync();
@@ -42,7 +42,7 @@ public class ContinuationQeueueTests
     public void TaskFromQueueCompletesAfterFinish()
     {
         //Arrange
-        ContinuationQueue continuationQueue = new ContinuationQueue();
+        ContinuationQueue continuationQueue = new();
 
         // Act
         var t1 = continuationQueue.WaitAsync();

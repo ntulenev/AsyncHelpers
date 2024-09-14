@@ -1,7 +1,7 @@
 ﻿namespace AsyncHelpers.TaskProducers;
 
 /// <summary>
-/// <see cref="ValueTask{TResult}"/> implemetation of <see cref="TaskCompletionSource{TResult}"/>.
+/// <see cref="ValueTask{TResult}"/> implementation of <see cref="TaskCompletionSource{TResult}"/>.
 /// </summary>
 /// <typeparam name="TResult">Type of Task result.</typeparam>
 /// <remarks>
@@ -66,7 +66,7 @@ public sealed class ValueTaskCompletionSource<TResult>(bool runContinuationsAsyn
     }
 
     /// <summary>
-    /// ValueTask that returns for awating.
+    /// ValueTask that returns for awaiting.
     /// </summary>
     public ValueTask<TResult> Task => _vts.Task;
 

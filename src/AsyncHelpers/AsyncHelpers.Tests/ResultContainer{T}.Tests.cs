@@ -55,7 +55,7 @@ public class ResultContainerTests
 
     [Fact(DisplayName = "The ResultContainer dot run action before dispose.")]
     [Trait("Category", "Unit")]
-    public void DontRunActionBeforeDispose()
+    public void DoNotRunActionBeforeDispose()
     {
         // Arrange
         bool isDisposed = false;

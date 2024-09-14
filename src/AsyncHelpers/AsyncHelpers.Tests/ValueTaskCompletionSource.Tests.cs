@@ -68,7 +68,7 @@ public class ValueTaskCompletionSource
 
     [Fact(DisplayName = "The ValueTaskCompletionSource returns failed task after result.")]
     [Trait("Category", "Unit")]
-    public void ReturnfailedTaskOnResult()
+    public void ReturnFailedTaskOnResult()
     {
         //Assert
         var vts = new ValueTaskCompletionSource<object>(false);
@@ -115,7 +115,7 @@ public class ValueTaskCompletionSource
         exception.Should().NotBeNull().And.BeOfType<InvalidOperationException>();
     }
 
-    [Fact(DisplayName = "Double set faild throws exception.")]
+    [Fact(DisplayName = "Double set failed throws exception.")]
     [Trait("Category", "Unit")]
     public void DoubleSetFailedThrowsException()
     {
@@ -177,7 +177,7 @@ public class ValueTaskCompletionSource
         result2.Should().BeFalse();
     }
 
-    [Fact(DisplayName = "Double try set faild not throws exception.")]
+    [Fact(DisplayName = "Double try set failed not throws exception.")]
     [Trait("Category", "Unit")]
     public void TryDoubleSetFailedNotThrowsException()
     {

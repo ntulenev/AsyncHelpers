@@ -64,7 +64,7 @@ public static class Extensions
     /// <param name="task">Task to execute.</param>
     /// <param name="timeout">timeout in ms.</param>
     /// <param name="ct">Token for cancel.</param>
-    /// <returns>True if task was finished before timout.</returns>
+    /// <returns>True if task was finished before timeout.</returns>
     /// <exception cref="ArgumentNullException">Throws if task is null.</exception>
     /// <exception cref="ArgumentException">Throws if timeout is not positive.</exception>
     public static async Task<bool> TryExecuteWithTimeoutAsync(this Task task, int timeout, CancellationToken ct = default)
@@ -85,7 +85,7 @@ public static class Extensions
     /// Cancels awaiting of <paramref name="task"/> when <paramref name="cancellationToken"/> is canceled.
     /// </summary>
     /// <typeparam name="T">Type return type</typeparam>
-    /// <param name="task">Task to cancell.</param>
+    /// <param name="task">Task to cancel.</param>
     /// <param name="cancellationToken">cancellation token.</param>
     /// <exception cref="ArgumentNullException">Throws if task is null.</exception>
     public static Task<T> WithCancellation<T>(this Task<T> task, CancellationToken cancellationToken)

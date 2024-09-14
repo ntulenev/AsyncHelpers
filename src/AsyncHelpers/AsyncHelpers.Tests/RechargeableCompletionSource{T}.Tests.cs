@@ -85,7 +85,7 @@ public class RechargeableCompletionSourceTests
         var t = Task.Run(() => rcs.SetResultAndWait(null!));
         _ = t.ContinueWith(_ => tFinishCheck.SetResult(), TaskContinuationOptions.ExecuteSynchronously);
 
-        await Task.Delay(1_000); // Attempts to ensure that task t never completes iteself.
+        await Task.Delay(1_000); // Attempts to ensure that task t never completes itself.
 
         // Assert
         t.IsCompleted.Should().BeFalse();
