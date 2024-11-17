@@ -117,5 +117,5 @@ internal sealed class ReusableValueTask<TResult> : IValueTaskSource<TResult>, IV
     public short Version => _mre.Version;
 
     private ManualResetValueTaskSourceCore<TResult> _mre;
-    private readonly object _tokenGuard = new();
+    private readonly Lock _tokenGuard = new();
 }

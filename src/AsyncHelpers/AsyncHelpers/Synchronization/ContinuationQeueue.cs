@@ -38,6 +38,6 @@ public sealed class ContinuationQueue
         }
     }
 
-    private readonly object _queueGuard = new();
+    private readonly Lock _queueGuard = new();
     private readonly Queue<TaskCompletionSource> _queue = new();
 }

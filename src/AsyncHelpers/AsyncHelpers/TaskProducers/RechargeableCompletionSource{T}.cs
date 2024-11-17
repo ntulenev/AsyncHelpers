@@ -73,6 +73,6 @@ public sealed class RechargeableCompletionSource<T>
     private volatile bool _isValueInWork;
     private readonly bool _runContinuationsAsynchronously;
     private readonly AutoResetEvent _are = new(false);
-    private readonly object _setResultGuard = new();
-    private readonly object _getValueAsyncGuard = new();
+    private readonly Lock _setResultGuard = new();
+    private readonly Lock _getValueAsyncGuard = new();
 }
