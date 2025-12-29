@@ -1,9 +1,11 @@
-﻿namespace AsyncHelpers.Helpers;
+namespace AsyncHelpers.Helpers;
 
 /// <summary>
 /// Container for action that fill be run on container dispose.
 /// </summary>
+#pragma warning disable CA1063 // Implement IDisposable Correctly
 public class ActionDispose : IDisposable
+#pragma warning restore CA1063 // Implement IDisposable Correctly
 {
     /// <summary>
     /// Creates <see cref="ActionDispose"/>.
@@ -17,9 +19,11 @@ public class ActionDispose : IDisposable
     }
 
     /// <inheritdoc/>
+#pragma warning disable CA1063 // Implement IDisposable Correctly
 #pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
     public virtual void Dispose()
 #pragma warning restore CA1816 // Dispose methods should call SuppressFinalize
+#pragma warning restore CA1063 // Implement IDisposable Correctly
     {
         if (!_isDisposed)
         {
@@ -28,20 +32,23 @@ public class ActionDispose : IDisposable
         }
     }
 
-    protected void RunDisposeAction()
+    /// <summary>
+    /// Runs the dispose action if the object has not been disposed.
+    /// </summary>
+    private void RunDisposeAction()
     {
         ThrowIfDisposed();
         _disposeAction();
     }
 
-    protected void ThrowIfDisposed()
-    {
-        if (_isDisposed)
-        {
-            throw new ObjectDisposedException(GetType().FullName);
-        }
-    }
+    /// <summary>
+    /// Throws an <see cref="ObjectDisposedException"/> if the object has been disposed.
+    /// </summary>
+    private void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(_isDisposed, GetType());
 
-    protected bool _isDisposed;
+    /// <summary>
+    /// Indicates whether the object has been disposed.
+    /// </summary>
+    private bool _isDisposed;
     private readonly Action _disposeAction;
 }
