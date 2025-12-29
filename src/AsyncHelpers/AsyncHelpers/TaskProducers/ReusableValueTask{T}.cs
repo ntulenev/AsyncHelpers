@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks.Sources;
+using System.Threading.Tasks.Sources;
 
 namespace AsyncHelpers.TaskProducers;
 
@@ -28,12 +28,9 @@ internal sealed class ReusableValueTask<TResult> : IValueTaskSource<TResult>, IV
             try
             {
                 var status = _mre.GetStatus(token);
-                if (status == ValueTaskSourceStatus.Canceled)
-                {
-                    throw new TaskCanceledException();
-                }
-
-                return _mre.GetResult(token);
+                return status == ValueTaskSourceStatus.Canceled ?
+                        throw new TaskCanceledException() :
+                        _mre.GetResult(token);
             }
             finally
             {
@@ -51,10 +48,7 @@ internal sealed class ReusableValueTask<TResult> : IValueTaskSource<TResult>, IV
     /// <summary>
     /// Gets the status of the operation.
     /// </summary>
-    public ValueTaskSourceStatus GetStatus(short token)
-    {
-        return _mre.GetStatus(token);
-    }
+    public ValueTaskSourceStatus GetStatus(short token) => _mre.GetStatus(token);
 
     /// <summary>
     /// Schedules the continuation action for this operation.
@@ -109,7 +103,7 @@ internal sealed class ReusableValueTask<TResult> : IValueTaskSource<TResult>, IV
     /// <summary>
     /// Creates <see cref="ValueTask{TResult}"/> for <see cref="ReusableValueTask{TResult}"/>.
     /// </summary>
-    public ValueTask<TResult> Task => new ValueTask<TResult>(this, Version);
+    public ValueTask<TResult> Task => new(this, Version);
 
     /// <summary>
     /// Gets the operation version.
