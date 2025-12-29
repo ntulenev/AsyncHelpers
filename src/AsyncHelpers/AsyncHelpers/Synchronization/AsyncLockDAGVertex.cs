@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 
 using AsyncHelpers.Helpers;
 
@@ -22,7 +22,7 @@ public class AsyncLockDAGVertex
 
         var writeLock = await _writeLockGuard.LockAsync(ct).ConfigureAwait(false);
 
-        await _readLockGuard.WaitAsync(ct);
+        await _readLockGuard.WaitAsync(ct).ConfigureAwait(false);
 
         return CreateLockObject(writeLock, linkedReadLocks);
     }
@@ -37,7 +37,7 @@ public class AsyncLockDAGVertex
     {
         ArgumentNullException.ThrowIfNull(reachableNodes);
 
-        if (!reachableNodes.Any())
+        if (reachableNodes.Length == 0)
         {
             throw new ArgumentException("Nodes collection is empty.", nameof(reachableNodes));
         }
@@ -66,9 +66,9 @@ public class AsyncLockDAGVertex
 
         bool DeepFirstLoopSearch([NotNull] AsyncLockDAGVertex node)
         {
-            previousNodes.Add(node);
+            _ = previousNodes.Add(node);
 
-            bool hasLoops = false;
+            var hasLoops = false;
 
             foreach (var child in node._reachableNodes)
             {
@@ -79,7 +79,7 @@ public class AsyncLockDAGVertex
                 }
             }
 
-            previousNodes.Remove(node);
+            _ = previousNodes.Remove(node);
 
             return hasLoops;
         }
