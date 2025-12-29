@@ -1,8 +1,10 @@
-﻿using AsyncHelpers.Helpers;
+using AsyncHelpers.Helpers;
 using AsyncHelpers.Synchronization;
 using AsyncHelpers.TaskProducers;
 
+#pragma warning disable CA1303 // Do not pass literals as localized parameters
 Console.WriteLine("Hello World!");
+#pragma warning restore CA1303 // Do not pass literals as localized parameters
 
 await RechargeableCompletionSourceExampleAsync().ConfigureAwait(false);
 await ValueTaskCompletionSourceExampleAsync().ConfigureAwait(false);
@@ -29,14 +31,18 @@ static async Task RechargeableCompletionSourceExampleAsync()
         }
     });
 
+#pragma warning disable CA1849 // Call async methods when in an async method
     Thread.Sleep(1000);
+#pragma warning restore CA1849 // Call async methods when in an async method
 
     var t2 = Task.Run(() =>
     {
-        int i = 0;
+        var i = 0;
         while (true)
         {
+#pragma warning disable CA1849 // Call async methods when in an async method
             Thread.Sleep(1_000);
+#pragma warning restore CA1849 // Call async methods when in an async method
             Console.WriteLine($"Add {i} on Thread {Environment.CurrentManagedThreadId}");
             rtcs.SetResultAndWait(i++);
         }
@@ -48,16 +54,18 @@ static async Task RechargeableCompletionSourceExampleAsync()
 static async Task ValueTaskCompletionSourceExampleAsync()
 {
     var vtcs = new ValueTaskCompletionSource<int>(false);
-    var are = new AutoResetEvent(false);
+    using var are = new AutoResetEvent(false);
 
     var t1 = Task.Run(() =>
     {
-        int v = 0;
+        var v = 0;
         while (true)
         {
+#pragma warning disable CA1849 // Call async methods when in an async method
             Thread.Sleep(1_000); // attempts to execute await t before set result
+#pragma warning restore CA1849 // Call async methods when in an async method
             vtcs.SetResult(v++);
-            are.WaitOne();
+            _ = are.WaitOne();
         }
     });
 
@@ -65,10 +73,10 @@ static async Task ValueTaskCompletionSourceExampleAsync()
     {
         while (true)
         {
-            ValueTask<int> t = vtcs.Task;
+            var t = vtcs.Task;
             var result = await t.ConfigureAwait(false);
             Console.WriteLine($"{result}");
-            are.Set();
+            _ = are.Set();
         }
     });
 
@@ -81,7 +89,9 @@ static async Task SinglePhaseAsyncBarrierExampleAsync()
 
     var t1 = Task.Run(async () =>
     {
+#pragma warning disable CA1849 // Call async methods when in an async method
         Thread.Sleep(1_000);
+#pragma warning restore CA1849 // Call async methods when in an async method
         Console.WriteLine("Task A Added");
         await spb.SignalAndWaitAsync().ConfigureAwait(false);
         Console.WriteLine("A Done");
@@ -89,7 +99,9 @@ static async Task SinglePhaseAsyncBarrierExampleAsync()
 
     var t2 = Task.Run(async () =>
     {
+#pragma warning disable CA1849 // Call async methods when in an async method
         Thread.Sleep(2_000);
+#pragma warning restore CA1849 // Call async methods when in an async method
         Console.WriteLine("Task B Added");
         await spb.SignalAndWaitAsync().ConfigureAwait(false);
         Console.WriteLine("B Done");
@@ -97,7 +109,9 @@ static async Task SinglePhaseAsyncBarrierExampleAsync()
 
     var t3 = Task.Run(async () =>
     {
+#pragma warning disable CA1849 // Call async methods when in an async method
         Thread.Sleep(3_000);
+#pragma warning restore CA1849 // Call async methods when in an async method
         Console.WriteLine("Task C Added");
         await spb.SignalAndWaitAsync().ConfigureAwait(false);
         Console.WriteLine("C Done");
@@ -111,7 +125,9 @@ static async Task ContinuationQueueExampleAsync()
 
     var t1 = Task.Run(async () =>
     {
+#pragma warning disable CA1849 // Call async methods when in an async method
         Thread.Sleep(100);
+#pragma warning restore CA1849 // Call async methods when in an async method
         Console.WriteLine("Task A Added");
         await cq.WaitAsync().ConfigureAwait(false);
         Console.WriteLine("A Done");
@@ -119,16 +135,22 @@ static async Task ContinuationQueueExampleAsync()
 
     var t2 = Task.Run(async () =>
     {
+#pragma warning disable CA1849 // Call async methods when in an async method
         Thread.Sleep(200);
+#pragma warning restore CA1849 // Call async methods when in an async method
         Console.WriteLine("Task B Added");
         await cq.WaitAsync().ConfigureAwait(false);
         Console.WriteLine("B Done");
     });
 
+#pragma warning disable CA1849 // Call async methods when in an async method
     Thread.Sleep(1_000);
+#pragma warning restore CA1849 // Call async methods when in an async method
     Console.WriteLine("FinishTask");
     cq.FinishTask();
+#pragma warning disable CA1849 // Call async methods when in an async method
     Thread.Sleep(1_000);
+#pragma warning restore CA1849 // Call async methods when in an async method
     Console.WriteLine("FinishTask");
     cq.FinishTask();
 
@@ -139,7 +161,9 @@ static async Task WaitAllTasksButCheckAsyncExampleAsync()
 {
     var t1 = Task.Run(() =>
     {
+#pragma warning disable CA1849 // Call async methods when in an async method
         Thread.Sleep(1_000);
+#pragma warning restore CA1849 // Call async methods when in an async method
         throw new InvalidOperationException();
     });
 
@@ -150,9 +174,7 @@ static async Task WaitAllTasksButCheckAsyncExampleAsync()
     });
 
     await new[] { t1, t2 }.WaitAllTasksButCheckAsync(() =>
-    {
-        Console.WriteLine("Rise error without waiting 10 seconds for second task.");
-    }).ConfigureAwait(false);
+    Console.WriteLine("Rise error without waiting 10 seconds for second task.")).ConfigureAwait(false);
 }
 
 static async Task TryExecuteWithTimeoutAsyncExampleAsync()
@@ -163,6 +185,7 @@ static async Task TryExecuteWithTimeoutAsyncExampleAsync()
     Console.WriteLine(isExecutedInTimeout);
 }
 
+#pragma warning disable IDE1006 // Naming Styles
 static async Task RunLongTaskWithCancellation()
 {
     var tcs = new TaskCompletionSource<int>();
@@ -171,31 +194,36 @@ static async Task RunLongTaskWithCancellation()
 
     try
     {
-        await tcs.Task.WithCancellation(cts.Token).ConfigureAwait(false);
+        _ = await tcs.Task.WithCancellation(cts.Token).ConfigureAwait(false);
     }
     catch (OperationCanceledException)
     {
         Console.WriteLine("Task was canceled");
     }
 }
+#pragma warning restore IDE1006 // Naming Styles
 
+#pragma warning disable IDE1006 // Naming Styles
 static async Task WhenAllOrErrorTest()
 {
     var tcs1 = new TaskCompletionSource<int>();
     var tcs2 = new TaskCompletionSource<int>();
     var tcs3 = new TaskCompletionSource<int>();
 
+#pragma warning disable CA2008 // Do not create tasks without passing a TaskScheduler
     _ = Task.Delay(1000).ContinueWith(_ => tcs3.SetException(new InvalidOperationException()));
+#pragma warning restore CA2008 // Do not create tasks without passing a TaskScheduler
 
     try
     {
-        await Extensions.WhenAllOrError(tcs1.Task, tcs2.Task, tcs3.Task).ConfigureAwait(false);
+        _ = await Extensions.WhenAllOrError(tcs1.Task, tcs2.Task, tcs3.Task).ConfigureAwait(false);
     }
     catch (InvalidOperationException)
     {
         Console.WriteLine("Error on await");
     }
 }
+#pragma warning restore IDE1006 // Naming Styles
 
 
 static async Task RWAsyncDAGVertexExampleAsync()
@@ -211,7 +239,7 @@ static async Task RWAsyncDAGVertexExampleAsync()
     {
         while (true)
         {
-            await Task.Delay(500); // Run interval.
+            await Task.Delay(500).ConfigureAwait(false); // Run interval.
             using var _ = await vertex1.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
             Console.WriteLine($"Start updating [{vertex1}]");
             vertex1.Value++;
@@ -224,7 +252,7 @@ static async Task RWAsyncDAGVertexExampleAsync()
     {
         while (true)
         {
-            await Task.Delay(400); // Run interval.
+            await Task.Delay(400).ConfigureAwait(false); // Run interval.
             using var _ = await vertex2.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
             Console.WriteLine($"    Start updating [{vertex2}]");
             vertex2.Value++;
@@ -237,7 +265,7 @@ static async Task RWAsyncDAGVertexExampleAsync()
     {
         while (true)
         {
-            await Task.Delay(400); // Run interval.
+            await Task.Delay(400).ConfigureAwait(false); // Run interval.
             using var _ = await vertex3.GetLockAsync(CancellationToken.None).ConfigureAwait(false);
             Console.WriteLine($"    Start updating [{vertex3}]");
             vertex3.Value++;
@@ -250,10 +278,23 @@ static async Task RWAsyncDAGVertexExampleAsync()
 }
 
 
-public class VertexWithValue(int id) : AsyncLockDAGVertex
+#pragma warning disable CA1050 // Declare types in namespaces
+/// <summary>
+/// Represents a vertex in an asynchronous lock DAG with an associated integer value.
+/// </summary>
+internal sealed class VertexWithValue(int id) : AsyncLockDAGVertex
+#pragma warning restore CA1050 // Declare types in namespaces
 {
+    /// <summary>
+    /// Gets or sets the value associated with this vertex.
+    /// </summary>
     public int Value { get; set; }
+
+    /// <summary>
+    /// Gets the identifier for this vertex.
+    /// </summary>
     public int Id { get; } = id;
 
+    /// <inheritdoc/>
     public override string ToString() => $"V{Id} => {Value}";
 }
