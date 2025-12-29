@@ -1,10 +1,12 @@
-﻿namespace AsyncHelpers.TaskProducers;
+namespace AsyncHelpers.TaskProducers;
 
 /// <summary>
 /// <see cref="TaskCompletionSource{TResult}"/> that could be recharge.
 /// </summary>
 /// <typeparam name="T"></typeparam>
+#pragma warning disable CA1001 // Types that own disposable fields should be disposable
 public sealed class RechargeableCompletionSource<T>
+#pragma warning restore CA1001 // Types that own disposable fields should be disposable
 {
 
     /// <summary>
@@ -27,7 +29,7 @@ public sealed class RechargeableCompletionSource<T>
         lock (_setResultGuard)
         {
             _tcs.SetResult(data);
-            _are.WaitOne();
+            _ = _are.WaitOne();
         }
     }
 
@@ -52,21 +54,16 @@ public sealed class RechargeableCompletionSource<T>
         {
             CreateCompletionSource();
             _isValueInWork = false;
-            _are.Set();
+            _ = _are.Set();
 
         }, value);
     }
 
     private void CreateCompletionSource()
     {
-        if (_runContinuationsAsynchronously)
-        {
-            _tcs = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
-        }
-        else
-        {
-            _tcs = new TaskCompletionSource<T>();
-        }
+        _tcs = _runContinuationsAsynchronously
+            ? new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously)
+            : new TaskCompletionSource<T>();
     }
 
     private TaskCompletionSource<T> _tcs = default!;
