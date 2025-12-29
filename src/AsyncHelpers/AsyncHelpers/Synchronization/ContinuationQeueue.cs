@@ -1,9 +1,11 @@
-﻿namespace AsyncHelpers.Synchronization;
+namespace AsyncHelpers.Synchronization;
 
 /// <summary>
 /// Queue that registers continuations and runs them one be one.
 /// </summary>
+#pragma warning disable CA1711 // Identifiers should not have incorrect suffix
 public sealed class ContinuationQueue
+#pragma warning restore CA1711 // Identifiers should not have incorrect suffix
 {
     /// <summary>
     /// Register task for continuation.
@@ -26,7 +28,7 @@ public sealed class ContinuationQueue
     {
         lock (_queueGuard)
         {
-            if (_queue.Any())
+            if (_queue.Count != 0)
             {
                 var tcs = _queue.Dequeue();
                 tcs.SetResult();
