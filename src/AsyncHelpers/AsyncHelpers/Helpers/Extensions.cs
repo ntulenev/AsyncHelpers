@@ -1,4 +1,4 @@
-﻿namespace AsyncHelpers.Helpers;
+namespace AsyncHelpers.Helpers;
 
 /// <summary>
 /// Extensions for tasks
@@ -6,7 +6,7 @@
 public static class Extensions
 {
     /// <summary>
-    /// Waits all tasks but invoke <paramref name="OnFaulted"/> if any task is failed.
+    /// Waits all tasks but invoke <paramref name="onFaulted"/> if any task is failed.
     /// </summary>
     /// <exception cref="ArgumentNullException">Throws if any arg is null.</exception>
     public static async Task WaitAllTasksButCheckAsync(this IEnumerable<Task> tasks, Action onFaulted)
@@ -17,6 +17,7 @@ public static class Extensions
 
         var any = Task.WhenAny(tasks).Unwrap();
 
+#pragma warning disable CA2008 // Do not create tasks without passing a TaskScheduler
         _ = any.ContinueWith(t =>
         {
             if (t.IsFaulted)
@@ -24,8 +25,9 @@ public static class Extensions
                 onFaulted();
             }
         });
+#pragma warning restore CA2008 // Do not create tasks without passing a TaskScheduler
 
-        await Task.WhenAll(tasks);
+        await Task.WhenAll(tasks).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -34,7 +36,9 @@ public static class Extensions
     /// <typeparam name="TResult">Task return type.</typeparam>
     /// <param name="tasks">Task to await.</param>
     /// <exception cref="ArgumentNullException">Throws if tasks is null.</exception>
+#pragma warning disable IDE1006 // Naming Styles
     public static async Task<TResult[]> WhenAllOrError<TResult>(params Task<TResult>[] tasks)
+#pragma warning restore IDE1006 // Naming Styles
     {
         ArgumentNullException.ThrowIfNull(tasks);
 
@@ -42,6 +46,7 @@ public static class Extensions
 
         foreach (var task in tasks)
         {
+#pragma warning disable CA2008 // Do not create tasks without passing a TaskScheduler
             _ = task.ContinueWith(t =>
             {
                 if (t.IsCanceled)
@@ -53,9 +58,10 @@ public static class Extensions
                     _ = killTask.TrySetException(t.Exception!.InnerException!);
                 }
             });
+#pragma warning restore CA2008 // Do not create tasks without passing a TaskScheduler
         }
 
-        return await await Task.WhenAny(killTask.Task, Task.WhenAll(tasks));
+        return await (await Task.WhenAny(killTask.Task, Task.WhenAll(tasks)).ConfigureAwait(false)).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -102,10 +108,12 @@ public static class Extensions
             return task;
         }
 
+#pragma warning disable IDE0046 // Convert to conditional expression
         if (cancellationToken.IsCancellationRequested)
         {
             return Task.FromCanceled<T>(cancellationToken);
         }
+#pragma warning restore IDE0046 // Convert to conditional expression
 
         return WithCancellationCoreAsync(task, cancellationToken);
     }
@@ -114,7 +122,7 @@ public static class Extensions
     {
         var tcs = new TaskCompletionSource();
 
-        using var _ = ct.Register(() => tcs.SetResult());
+        using var _ = ct.Register(tcs.SetResult);
 
         if (task != await Task.WhenAny(task, tcs.Task).ConfigureAwait(false))
         {
